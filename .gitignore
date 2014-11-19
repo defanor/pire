@@ -22,6 +22,7 @@ keep/
 
 dist/
 
+
 website
 
 
@@ -35,5 +36,5 @@ build.sh
 # later...
 test
 
-remark-*
+obs-*
 note-*
