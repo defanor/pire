@@ -27,7 +27,7 @@ website
 _shake/
 ..database
 Build.hs
-build.hs
+build.sh
 
 
 # later...
