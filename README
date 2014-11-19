@@ -33,5 +33,7 @@ Some code snippets were used from other sources still:
    documentation from Norman Walsh 
    (https://github.com/ndw/xslt-relax-ng).
 
-Please find further documentation (as docbook source, html, and pdf) 
-in the docs directory.
+Please find further documentation as docbook source 
+in the docs directory as docbook source, and under releases
+as html, pdf.
+
