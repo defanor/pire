@@ -2,8 +2,35 @@
 
 
 
+
+
 *.dbk+
 *.dbkxi
-_shake/
+
 
 .cabal-sandbox/
+cabal.sandbox.config
+
+
+batch-lmodules-sb.el
+e-dir-locals.el
+lmodules.el
+
+org/
+
+keep/
+
+website
+
+
+# in general exclude shake build files...
+_shake/
+..database
+Build.hs
+build.hs
+
+
+# later...
+test
+
+remark-*
