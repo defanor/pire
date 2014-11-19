@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<section
+    xmlns="http://docbook.org/ns/docbook" version="5.0"
+    xmlns:xi="http://www.w3.org/2001/XInclude"
+    >
+
+  <title>The Trifecta parsers: a tour</title>
+
+
+  <para>
+    Load the parser module <classname>ReParse</classname> to start some experiments:
+  </para>
+
+
+  <programlisting><![CDATA[reuleaux@softland ~/etc/pire $ cabal repl
+Preprocessing library pire-0.1...
+GHCi, version 7.6.3: http://www.haskell.org/ghc/  :? for help
+Loading package ghc-prim ... linking ... done.
+Loading package integer-gmp ... linking ... done.
+...
+Loading package HUnit-1.2.5.2 ... linking ... done.
+[1 of 9] Compiling LayoutToken      ( src/LayoutToken.hs, interpreted )
+[2 of 9] Compiling Syntax           ( src/Syntax.hs, interpreted )
+[3 of 9] Compiling Parser           ( src/Parser.hs, interpreted )
+[4 of 9] Compiling PrettyPrint      ( src/PrettyPrint.hs, interpreted )
+[5 of 9] Compiling Environment      ( src/Environment.hs, interpreted )
+[6 of 9] Compiling Equal            ( src/Equal.hs, interpreted )
+[7 of 9] Compiling TypeCheck        ( src/TypeCheck.hs, interpreted )
+[8 of 9] Compiling Modules          ( src/Modules.hs, interpreted )
+[9 of 9] Compiling Main             ( src/Main.hs, interpreted )
+Ok, modules loaded: Syntax, Parser, TypeCheck, Main, LayoutToken, Environment, PrettyPrint, Equal, Modules.
+*Syntax > :l ReParse
+[1 of 5] Compiling Syntax           ( src/Syntax.hs, interpreted )
+[2 of 5] Compiling PrettyPrint      ( src/PrettyPrint.hs, interpreted )
+[3 of 5] Compiling ReSyntax         ( src/ReSyntax.hs, interpreted )
+[4 of 5] Compiling RePP             ( src/RePP.hs, interpreted )
+[5 of 5] Compiling ReParse          ( src/ReParse.hs, interpreted )
+Ok, modules loaded: Syntax, PrettyPrint, ReParse, ReSyntax, RePP.
+*ReParse >]]></programlisting>
+
+
+  <para>
+    Parse an identifier:
+  </para>
+
+
+  <programlisting><![CDATA[*ReParse > parseTest (runInnerParser $ runFreshMT $ evalStateT (whiteSpace *> identifier) piInit ) "  wow this rocks"
+"wow"]]></programlisting>
+  
+
+  
+  <para>
+    Now parse the identifier in the white space aware parser,
+    ie. including the whitespace following it
+  </para>
+
+  
+  <programlisting><![CDATA[*ReParse > parseTest (runInnerParser $ runFreshMT $ evalStateT (whiteSpace *> id') piInit ) "  wow this rocks"
+("wow",Ws " ")
+*ReParse >]]></programlisting>
+  
+  
+  <para>
+    Naming conventions are as follows:
+  </para>
+
+  <itemizedlist>
+    <listitem>
+      <para>
+	Parsers for abstract syntax (absy parsers) have names like the
+	original parsec ones: <emphasis>identifier</emphasis>,
+	<emphasis>variable</emphasis>, <emphasis>reserved</emphasis>,
+	<emphasis>expr</emphasis> etc. and they parse the original
+	data structures defined in
+	<classname>Syntax.hs</classname>. Their code is in most cases
+	identical to the Parsec versions.
+      </para>
+    </listitem>
+
+    <listitem>
+      <para>
+	Primed versions of those names: <emphasis>identifier'</emphasis>,
+	<emphasis>expr'</emphasis> etc. are used for the corresponding concrete syntax
+	parsers, but sometimes I have taken the liberty to shortcut /
+	simplify those names: <emphasis>id'</emphasis> for
+	<emphasis>identifier'</emphasis>, <emphasis>res'</emphasis> for <emphasis>reserved'</emphasis> etc.,
+	especially for those parsers that are used very often (the
+	building blocks). They parse the white space aware data structures
+	in <classname>ReSyntax.hs</classname>
+      </para>
+    </listitem>
+
+    
+    <listitem>
+      <para>
+	Any other variation of a name, like double primes:
+	<emphasis>id''</emphasis> denote helper functions, experimental
+	versions etc.
+      </para>
+    </listitem>
+
+    
+  </itemizedlist>
+
+
+  <para>
+    For reading the code it may be easiest to start with the simple parsers
+    (below the comment line <literal>-- the real stuff - parsing</literal>
+    in <classname>ReParse</classname>) and then
+    proceed to the more complicated ones, and later maybe read the Trifecta setup etc
+    before that line.
+  </para>
+
+  
+  <!-- <para> -->
+  <!--   It turns out there are so few basic building blocks... -->
+  <!-- </para> -->
+
+
+    
+  <para>
+    More complicated expressions can be parsed, too:
+  </para>
+  
+
+  
+  <programlisting><![CDATA[*ReParse > parseTest (runInnerParser $ runFreshMT $ evalStateT (whiteSpace *> expr) piInit ) "   \\n . if nat_leq n 0 then 1 else mult n (fac (minus n 1))  "
+Pos "<interactive>" (line 0, column 4) (Lam (<(n,{Annot Nothing})> Pos "<interactive>" (line 0, column 9) (If (Pos "<interactive>" (line 0, column 12) (App (App (Var nat_leq) (Var 0@0)) (DCon "Zero" [] (Annot (Just (TCon "Nat" [])))))) (Pos "<interactive>" (line 0, column 29) (DCon "Succ" [Arg Runtime (DCon "Zero" [] (Annot (Just (TCon "Nat" []))))] (Annot (Just (TCon "Nat" []))))) (Pos "<interactive>" (line 0, column 36) (App (App (Var mult) (Var 0@0)) (Paren (Pos "<interactive>" (line 0, column 44) (App (Var fac) (Paren (Pos "<interactive>" (line 0, column 49) (App (App (Var minus) (Var 0@0)) (DCon "Succ" [Arg Runtime (DCon "Zero" [] (Annot (Just (TCon "Nat" []))))] (Annot (Just (TCon "Nat" [])))))))))))) (Annot Nothing))))
+parseTest (runInnerParser $ runFreshMT $ evalStateT (whiteSpace *> expr) piInit ) "   \\n . if nat_leq n 0 then 1 else mult n (fac (minus n 1))  "minus n 1))  "
+  :: MonadIO m => m ()
+*ReParse >]]></programlisting>
+
+    
+  <para>
+    And the equivalent expression in concrete syntax
+    (<emphasis>expr'</emphasis> instead of <emphasis>expr</emphasis>):
+  </para>
+
+
+    
+  <programlisting><![CDATA[*ReParse > parseTest (runInnerParser $ runFreshMT $ evalStateT (whiteSpace *> expr') piInit ) "   \\n . if nat_leq n 0 then 1 else mult n (fac (minus n 1))  "
+Lam' (Ws "") (<(n,{Annot' Nothing (Ws " ")})> If' (Ws " ") (App' (App' (Var' nat_leq (Ws " ")) (Var' 0@0 (Ws " "))) (DCon' (DCName' "Zero" (Ws " ")) [] (Annot' (Just (TCon' (TCName' "Nat" (Ws "")) [])) (Ws "")))) (Ws " ") (DCon' (DCName' "Succ" (Ws " ")) [Arg' Runtime (DCon' (DCName' "Zero" (Ws "")) [] (Annot' (Just (TCon' (TCName' "Nat" (Ws "")) [])) (Ws "")))] (Annot' (Just (TCon' (TCName' "Nat" (Ws "")) [])) (Ws ""))) (Ws " ") (App' (App' (Var' mult (Ws " ")) (Var' 0@0 (Ws " "))) (Paren' (ParenOpen (Ws "")) (App' (Var' fac (Ws " ")) (Paren' (ParenOpen (Ws "")) (App' (App' (Var' minus (Ws " ")) (Var' 0@0 (Ws " "))) (DCon' (DCName' "Succ" (Ws "")) [Arg' Runtime (DCon' (DCName' "Zero" (Ws "")) [] (Annot' (Just (TCon' (TCName' "Nat" (Ws "")) [])) (Ws "")))] (Annot' (Just (TCon' (TCName' "Nat" (Ws "")) [])) (Ws "")))) (ParenClose (Ws "")))) (ParenClose (Ws "  ")))) (Annot' Nothing (Ws "")))
+*ReParse >]]></programlisting>
+
+      
+  <para>
+    Of course one wants some kind of pretty printing here, but
+    <emphasis>parseTest</emphasis> is only so useful here, because it
+    does its own job of rendering the result by running in the IO
+    monad, as can be seen by its type its type:
+  </para>
+
+
+      
+  <programlisting><![CDATA[
+  *ReParse > :t parseTest (runInnerParser $ runFreshMT $ evalStateT (whiteSpace *> expr) piInit ) "   \\n . if nat_leq n 0 then 1 else mult n (fac (minus n 1))  "
+parseTest (runInnerParser $ runFreshMT $ evalStateT (whiteSpace *> expr) piInit ) "   \\n . if nat_leq n 0 then 1 else mult n (fac (minus n 1))  "
+  :: MonadIO m => m ()
+  *ReParse >]]></programlisting>
+  
+</section>

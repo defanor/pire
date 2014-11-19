@@ -1,0 +1,359 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<section
+    xmlns="http://docbook.org/ns/docbook" version="5.0"
+    xmlns:xi="http://www.w3.org/2001/XInclude"
+    >
+
+  <title>Pi-forall's Parsec parser</title>
+
+  <para>
+    While Pi-forall's parser is arguably its least interesting part (and
+    barely mentioned in Stephanie's lectures) parsing is the starting
+    point for any serious implementation (and hence refactoring) work.
+  </para>
+
+  <para>
+    Moreoveer, as the absy parser developed here is merely a rewrite
+    of Pi-forall's <emphasis>Parsec</emphasis> parser in
+    <emphasis>Trifecta</emphasis>, some examples, of how this Parsec
+    parser can be used, may be worthwhile looking at, both as a Parsec
+    recap, and to get in first touch with some Pi-forall code.
+  </para>
+
+  <para>
+    Say we are given a small Pi-forall input file
+    <classname>Sample.pi</classname> with some function declarations:
+  </para>
+
+  <programlisting><xi:include href="../samples/Sample.pi"
+  parse="text"/></programlisting>
+  
+  <para>
+    Never mind too much the details of those declarations at this point,
+    just note a few points:
+  </para>
+
+  <itemizedlist>
+    <listitem>
+      <para>
+        The factorial function <function>fac</function> is defined the
+        usual way, and requires the notion of natural numbers
+        (<classname>Nat</classname>) together with some operations on them
+        (<function>mult</function>, <function>minus</function>). Those
+        we import from the <classname>Nat</classname> module, not shown
+        here, but available with Pi-forall's source as well.
+      </para>
+    </listitem>
+    <listitem>
+      <para>
+        We need so few things from <classname>Nat</classname> here, that
+        we could have defined them ourselves, the commented out
+        <classname>Nat</classname> data type definition gives a taste of
+        what they'd look like, and indeed: doing so was useful when
+        developing the Trifecta parser, as parsing a single file
+        obviously is a easier than handling module imports.
+      </para>
+    </listitem>
+    <listitem>
+      <para>
+        Pi-forall allows for Haskell-style comments.
+      </para>
+    </listitem>
+    <listitem>
+
+      <!-- <para> -->
+      <!--   The remaining functions will be interesting for our first -->
+      <!--   refactoring later, namely renaming: note eg., how the locally -->
+      <!--   defined <function>fac</function> in <function>bar</function> -->
+      <!--   shadows the globally defined one. -->
+      <!-- </para> -->
+
+      <para>
+        The remaining functions may serve as examples for some simple
+	refactorings later.
+      </para>
+      
+    </listitem>
+    <listitem>
+      <para>
+        <function>nat_leq</function> (less or equal on naturals) and
+        <function>two</function> exercise the <classname>Nat</classname>
+        data type, and note how the <literal>case</literal> expression
+        uses layout syntax (as in Haskell), ie. requires layout parsing.
+      </para>
+    </listitem>
+    <listitem>
+      <para>
+        The very first <literal>-*- haskell -*-</literal> line was just a
+        means for me to get some (Haskell) syntax highlighting in Emacs for
+        Pi-forall programs.
+      </para>
+    </listitem>
+  </itemizedlist>
+  <para>
+    The usual way of interacting with Pi-forall is calling its
+    <function>goFilename</function> function in
+    <classname>Main.hs</classname>, which parses, typechecks, and
+    pretty-prints the given Pi-forall source file, in the case of
+    <classname>Sample.pi</classname> above:
+  </para>
+
+  <programlisting><![CDATA[*Main > goFilename "/home/reuleaux/etc/th-p/pi/Sample.pi"
+processing Sample.pi...
+Parsing File "/home/reuleaux/etc/th-p/pi/Nat.pi"
+Parsing File "/home/reuleaux/etc/th-p/pi/Sample.pi"
+type checking...
+Checking module "Nat"
+Checking module "Fac"
+module Fac where
+import Nat
+two : Nat
+two = 2
+nat_leq : Nat -> Nat -> Bool
+nat_leq = \x y .
+            case x of
+              Zero -> True
+              (Succ m) ->
+                case y of
+                  Zero -> False
+                  (Succ n) -> nat_leq m n
+fac : Nat -> Nat
+fac = \n . if nat_leq n 0 then 1 else mult n (fac (minus n (1)))
+foo : Nat -> Nat
+foo = \n . fac (mult (2) n)
+bar : Nat -> Nat
+bar = \n .
+        let fac = \x . plus x (2) in plus (foo n) (fac (mult (3) n))
+*Main >]]></programlisting>
+
+
+<para>
+    As can be seen:
+  </para>
+  <itemizedlist>
+    <listitem>
+
+      <para>
+        the output is quite readable and resembles the input, but all
+        the comments are lost, as are the exact levels of indentation,
+        newlines and parenthesis. The result is therefore of limited
+        use for any refactoring efforts only, and this was the reason
+        for developing another white space aware parser.
+      </para>
+
+      
+    </listitem>
+    <listitem>
+      <para>
+        Automatic conversions between different representations, like
+        the one above for <classname>Nat</classname> from
+        <literal>Succ (Succ Zero)</literal> to <literal>2</literal> in
+        the function <function>two</function>, we don't want either
+        for our refactoring purposes.
+      </para>
+    </listitem>
+    <listitem>
+      <para>
+        The fact that our <classname>Sample.pi</classname> is also
+        typechecked, cannot really be seen in the output above (except
+        for the messages <literal>type checking...</literal> etc.), but
+        is important for we don't want to concern ourselves with
+        programs that are syntactically, but not type correct, and type
+        checking gives us a means to ensure that.
+      </para>
+    </listitem>
+  </itemizedlist>
+  <para>
+    While <function>goFilename</function> is a convenient way to parse,
+    typecheck and pretty-print our Pi-forall code all in one go,
+    sometimes we want more fine grained control, want to see
+    intermediate results, the abstract syntax tree ie..
+  </para>
+  <para>
+    The following examples are meant as hints, how to &quot;look under
+    the hood&quot; and discover more details, rather than as a complete
+    description of the system.
+  </para>
+  <para>
+    Given that our <classname>Sample.pi</classname> file imports the
+    <classname>Nat</classname> module, we cannot use the parsing functions
+    from <classname>Parser.hs</classname> directly, but only those from
+    <classname>Module.hs</classname> (namely
+    <function>getModules</function>). Cheating at the source code of
+    <function>goFilename</function> we can get the abstract syntax tree
+    of our <classname>Sample.pi</classname> file by running
+    <function>getModules</function> in the
+    <classname>Control.Monad.Error</classname> monad, like so (only the
+    beginning of the result is shown):
+  </para>
+
+
+  <programlisting><![CDATA[*Main > runErrorT (getModules ["/home/reuleaux/etc/th-p/pi/"] "Sample.pi")
+Parsing File "/home/reuleaux/etc/th-p/pi/Nat.pi"
+Parsing File "/home/reuleaux/etc/th-p/pi/Sample.pi"
+Right [Module {moduleName = "Nat", moduleImports = [], moduleEntries = [Data "Nat" Empty [ConstructorDef "/home/reuleaux/etc/th-p/pi/Nat.pi" (line 14, column 3) "Zero" Empty,ConstructorDef "/home/reuleaux/etc/th-p/pi/Nat.pi" (line 15, column 3) "Succ" (Cons Runtime _ (Pos "/home/reuleaux/etc/th-p/pi/Nat.pi" ...]]></programlisting>
+
+
+  <para>
+    The result is a list of modules, really: <classname>Nat.pi</classname>
+    and <classname>Sample.pi</classname>, in the Either monad. Normally
+    we'd be interested only in the <emphasis>last</emphasis> module
+    parsed (<classname>Sample.pi</classname> ie.), and
+    <function>fromRight'</function> from the
+    <classname>either</classname> package is handy for revealing this
+    result (again, only the beginning of the output is shown):
+  </para>
+
+
+  <programlisting><![CDATA[*Main > :m +Data.Either.Combinators
+*Main Data.Either.Combinators > runErrorT (getModules ["/home/reuleaux/etc/th-p/pi/"] "Sample.pi") >>= return . last . fromRight'
+Parsing File "/home/reuleaux/etc/th-p/pi/Nat.pi"
+Parsing File "/home/reuleaux/etc/th-p/pi/Sample.pi"
+Module {moduleName = "Fac", moduleImports = [ModuleImport "Nat"], moduleEntries = [Sig two (Pos "/home/reuleaux/etc/th-p/pi/Sample.pi" (line 12, column 7) (TCon "Nat" [])),Def two ...]]></programlisting>
+
+
+  
+  <para>
+    Now we can use <emphasis>disp</emphasis> for pretty printing the
+    result:
+  </para>
+
+
+  
+  <programlisting><![CDATA[*Main Data.Either.Combinators > runErrorT (getModules ["/home/reuleaux/etc/th-p/pi/"] "Sample.pi") >>= return . disp . last . fromRight'
+Parsing File "/home/reuleaux/etc/th-p/pi/Nat.pi"
+Parsing File "/home/reuleaux/etc/th-p/pi/Sample.pi"
+module Fac where
+import Nat
+two : Nat
+two = 2
+nat_leq : Nat -> Nat -> Bool
+nat_leq = \x y .
+            case x of
+              Zero -> True
+              (Succ m) ->
+                case y of
+                  Zero -> False
+                  (Succ n) -> nat_leq m n
+fac : Nat -> Nat
+fac = \n .
+        if nat_leq n 0 then 1 else mult n ((fac ((minus n (1)))))
+foo : Nat -> Nat
+foo = \n . fac ((mult (2) n))
+bar : Nat -> Nat
+bar = \n .
+        let fac = ((\x . plus x (2)) : Nat -> Nat) in
+        plus ((foo n)) ((fac ((mult (3) n))))
+*Main Data.Either.Combinators >]]></programlisting>
+
+
+
+  
+  <para>
+    If we were looking at the contents of just a single self-contained
+    file, without any imports of other modules ie., say at a file
+    <classname>SimpleSample.pi</classname>:
+  </para>
+  
+  
+  <programlisting><xi:include href="../samples/SimpleSample.pi"
+  parse="text"/></programlisting>
+
+
+  <para>
+    then we could use <function>parseModuleFile</function> from
+    <classname>Parser.hs</classname> directly. (We need to provide
+    <function>emptyConstructorNames</function> from
+    <classname>Syntax.hs</classname>, so that the parser can collect
+    information about data types and constructors found
+    (<classname>Nat</classname>, <methodname>Zero</methodname>,
+    <methodname>Succ</methodname>,...) running in the
+    <methodname>State</methodname> monad internally):
+  </para>
+
+    
+  <programlisting><![CDATA[*Main Syntax Data.Either.Combinators > runErrorT (parseModuleFile  emptyConstructorNames  "/home/reuleaux/etc/th-p/pi/SimpleSample.pi") >>= return . disp . fromRight'
+Parsing File "/home/reuleaux/etc/th-p/pi/SimpleSample.pi"
+module Fac where
+data Nat : Type where
+  Zero
+  Succ of (_ : Nat)
+two : Nat
+two = 2
+nat_leq : Nat -> Nat -> Bool
+nat_leq = \x y .
+            case x of
+              Zero -> True
+              (Succ m) ->
+                case y of
+                  Zero -> False
+                  (Succ n) -> nat_leq m n
+fac : Nat -> Nat
+fac = \n .
+        if nat_leq n 0 then 1 else mult n ((fac ((minus n (1)))))
+*Main Syntax Data.Either.Combinators >]]></programlisting>
+
+
+  <para>
+    The situation is less complicated (does not require any file I/O) if
+    we just want to parse a string as an expression:
+  </para>
+
+      
+  <programlisting><![CDATA[*Main Data.Either.Combinators > parseExpr   "   \\x  .  a  "
+Right (Pos "<interactive>" (line 1, column 4) (Lam (<(x,{Annot Nothing})> Pos "<interactive>" (line 1, column 11) (Var a))))
+*Main Data.Either.Combinators > fromRight' $ parseExpr   "   \\x  .  a  "
+Pos "<interactive>" (line 1, column 4) (Lam (<(x,{Annot Nothing})> Pos "<interactive>" (line 1, column 11) (Var a)))
+*Main Data.Either.Combinators >]]></programlisting>
+
+  
+  <para>
+    Again, pretty printing is convenient for reading the result:
+  </para>
+
+        
+  <programlisting><![CDATA[*Main Data.Either.Combinators > disp $ fromRight' $ parseExpr   "   \\x  .  a  "
+\x . a
+*Main Data.Either.Combinators >]]></programlisting>
+
+  
+  <para>
+    <classname>Parser.hs</classname> exports only
+    <function>parseModuleFile</function> and
+    <function>parseExpr</function>, but we can exercise the individual
+    building blocks of the parser of course, by loading
+    <classname>Parser.hs</classname> directly: ie. we can parse
+    expresssions, declarations, signature definitions, variables etc.
+    (shown is parsing an expression):
+  </para>
+
+          
+  <programlisting><![CDATA[*Parser > runFreshM (evalStateT (runParserT (do { whiteSpace; v <- expr; eof; return v}) [] "<interactive>" " Succ n") emptyConstructorNames)
+Right (Pos "<interactive>" (line 1, column 2) (App (Var Succ) (Var n)))
+*Parser >]]></programlisting>
+
+  <para>
+    This time we have to &quot;unpeel the onion&quot; of our monad
+    transformer stack ourselves: the aforementioned
+    <emphasis>StateT</emphasis> keeps track of constructor names, and
+    <emphasis>FreshM</emphasis> from <classname>unbound</classname> is
+    responsible for names and variable bindings.
+  </para>
+  <para>
+    Note how, without any further knowledge of
+    <emphasis>Succ</emphasis>, <emphasis>Succ n</emphasis> is just
+    parsed as a function application. This may not be what we want: An
+    admittedly ad-hoc <function>prelude</function> helps recognizing
+    <emphasis>Succ</emphasis> as a data constructor rather than as a
+    regular function:
+  </para>
+
+           
+  <programlisting><![CDATA[*Parser > let prelude = ConstructorNames (S.fromList ["Nat"]) (S.fromList ["Zero", "Succ"])
+*Parser > runFreshM (evalStateT (runParserT (do { whiteSpace; v <- expr; eof; return v}) [] "<interactive>" " Succ n") prelude)
+Right (Pos "<interactive>" (line 1, column 2) (DCon "Succ" [Arg Runtime (Var n)] (Annot Nothing)))
+*Parser >]]></programlisting>
+
+  
+</section>

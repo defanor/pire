@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<xsl:stylesheet 
+    version="1.0"
+    xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+    xmlns:fo="http://www.w3.org/1999/XSL/Format"
+    
+    xmlns:d="http://docbook.org/ns/docbook"
+    exclude-result-prefixes="d"
+    >
+
+
+  <!-- 
+       from
+       /usr/share/xml/docbook/stylesheet/docbook-xsl-ns/common/common.xsl
+       
+       unverändert gelassen, daher auskommentiert
+       (dazu nur Kommentar "Change..." nach oben)
+  -->
+
+
+  <!-- Change this list if you want to change the order of symbols -->
+  
+
+  <!-- <xsl:template name="next.itemsymbol"> -->
+  <!--   <xsl:param name="itemsymbol" select="'default'"/> -->
+  <!--   <xsl:choose> -->
+  <!--     <xsl:when test="$itemsymbol = 'disc'">circle</xsl:when> -->
+  <!--     <xsl:when test="$itemsymbol = 'circle'">square</xsl:when> -->
+  <!--     <xsl:otherwise>disc</xsl:otherwise> -->
+  <!--   </xsl:choose> -->
+  <!-- </xsl:template> -->
+  
+
+
+
+  <!-- 
+       from
+       /usr/share/xml/docbook/stylesheet/docbook-xsl-ns/fo/list.xsl
+  -->
+  
+  <xsl:template name="itemizedlist.label.markup">
+    <xsl:param name="itemsymbol" select="'disc'"/>
+
+    <xsl:choose>
+      <xsl:when test="$itemsymbol='none'"></xsl:when>
+      <xsl:when test="$itemsymbol='disc'">&#x2022;</xsl:when>
+      <xsl:when test="$itemsymbol='bullet'">&#x2022;</xsl:when>
+      <xsl:when test="$itemsymbol='endash'">&#x2013;</xsl:when>
+      <xsl:when test="$itemsymbol='emdash'">&#x2014;</xsl:when>
+      <!-- Some of these may work in your XSL-FO processor and fonts -->
+      <!--
+	  <xsl:when test="$itemsymbol='square'">&#x25A0;</xsl:when>
+	  <xsl:when test="$itemsymbol='box'">&#x25A0;</xsl:when>
+	  <xsl:when test="$itemsymbol='smallblacksquare'">&#x25AA;</xsl:when>
+	  <xsl:when test="$itemsymbol='circle'">&#x25CB;</xsl:when>
+	  <xsl:when test="$itemsymbol='opencircle'">&#x25CB;</xsl:when>
+	  <xsl:when test="$itemsymbol='whitesquare'">&#x25A1;</xsl:when>
+	  <xsl:when test="$itemsymbol='smallwhitesquare'">&#x25AB;</xsl:when>
+	  <xsl:when test="$itemsymbol='round'">&#x25CF;</xsl:when>
+	  <xsl:when test="$itemsymbol='blackcircle'">&#x25CF;</xsl:when>
+	  <xsl:when test="$itemsymbol='whitebullet'">&#x25E6;</xsl:when>
+	  <xsl:when test="$itemsymbol='triangle'">&#x2023;</xsl:when>
+	  <xsl:when test="$itemsymbol='point'">&#x203A;</xsl:when>
+	  <xsl:when test="$itemsymbol='hand'"><fo:inline 
+          font-family="Wingdings 2">A</fo:inline></xsl:when>
+      -->
+
+      <!-- rx 
+	   'WHITE CIRCLE'
+	   pb in palatino, helvetica, times
+	   Glyph "○" (0x25cb, circle) not available in font "PalatinoLinotype-Roman"
+      -->
+      <!-- <xsl:when test="$itemsymbol='circle'">&#x25CB;</xsl:when> -->
+      <!-- aber auch in helvetica, times... -->
+      <!-- <xsl:when test="$itemsymbol='circle'"><fo:block -->
+      <!-- 						font-family="Times" -->
+      <!-- 						>&#x25CB;</fo:block> -->
+      <!-- </xsl:when> -->
+
+
+      
+      <!-- rx 
+	   HEAVY LARGE CIRCLE
+	   ebenfalls pb
+      -->
+      <!-- <xsl:when test="$itemsymbol='circle'">&#x2B55;</xsl:when> -->
+      
+      
+
+      <!-- rx 
+	   SHADOWED WHITE CIRCLE
+	   fkt- als zapfdingbats sym wohl immer
+	   und wow, fkt sogar mit kleiner machen
+      -->
+      <xsl:when test="$itemsymbol='circle'"><fo:block
+      						font-family="ZapfDingbats"
+      						font-size="50%"
+      						color="#696652"
+      						>&#x274D;</fo:block>
+      </xsl:when>
+
+
+
+      <xsl:otherwise>&#x2022;</xsl:otherwise>
+    </xsl:choose>
+  </xsl:template>
+
+
+  
+</xsl:stylesheet>

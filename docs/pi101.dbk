@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+
+<section
+    xmlns="http://docbook.org/ns/docbook" version="5.0"
+    xmlns:xi="http://www.w3.org/2001/XInclude"
+    >
+    
+
+  <title>Pi-forall 101</title>
+
+  <para>
+    Starting from just the bare minimum of language constructs:
+  </para>
+
+  
+
+  <programlisting><![CDATA[a, A := 
+  x            -- variables
+  \x . a       -- lambda abstraction
+  x b          -- function application
+  (x: A) -> B  -- function type constructor (aka pi-types) 
+  x: Type      -- the type of types]]></programlisting>
+    
+
+  <para>
+    Pi-forall is presented at various stages of increasing complexity in
+    the course of Stephanie's discussion:
+  </para>
+  <itemizedlist>
+    <listitem>
+      <para>
+        More language constructs are added: type annotations, sigma
+        types, propositional equality etc.
+      </para>
+    </listitem>
+    <listitem>
+      <para>
+        The notion of (definitional) equality is refined from initially
+        just alpha equivalence to beta-equivalence later.
+      </para>
+    </listitem>
+    <listitem>
+      <para>
+        Constructors for new data types are introduced.
+      </para>
+    </listitem>
+  </itemizedlist>
+  <para>
+    The language is a real dependently typed language:
+  </para>
+  <itemizedlist>
+    <listitem>
+      <para>
+        in that types are just expressions (by convention lower case
+        letters are used for expressions, upper case letters for types)
+      </para>
+    </listitem>
+    <listitem>
+      <para>
+        function type constructors (aka pi-types) are binders (the
+        <literal>x</literal> in <literal><![CDATA[(x: A) -> B]]></literal> can
+        appear in <literal>B</literal>)
+      </para>
+    </listitem>
+    <listitem>
+      <para>
+        any type has type <literal>Type</literal> (the &quot;type in
+        type&quot;-axiom), a simple rule to make Pi-forall's type system
+        consistent (but inconsistent as a logic, not taking into account
+        different universe levels).
+      </para>
+    </listitem>
+  </itemizedlist>
+  <para>
+    The language is somehow limited:
+  </para>
+  <itemizedlist>
+    <listitem>
+      <para>
+        in that there are nor checks for totality or termination,
+      </para>
+    </listitem>
+    <listitem>
+      <para>
+        there is no means to execute Pi-forall programs currently
+      </para>
+    </listitem>
+    <listitem>
+      <para>
+        there are no (proof) tactics .
+      </para>
+    </listitem>
+  </itemizedlist>
+  <para>
+    At the same time some aspects of Pi-forall are relatively
+    elaborated:
+  </para>
+  <itemizedlist>
+    <listitem>
+      <para>
+        the notion of beta-equivalence for definitional equality eg., as
+        mentioned above.
+      </para>
+    </listitem>
+    <listitem>
+      <para>
+        Variables can be marked as <emphasis>erasable</emphasis>, ie.
+        needed only for type checking, not at runtime. (Those are
+        different from <emphasis>implicit arguments</emphasis>: there
+        aren't any implicit arguments allowed in Pi-forall).
+      </para>
+    </listitem>
+    <listitem>
+      <para>
+        A simple module system is provided.
+      </para>
+    </listitem>
+  </itemizedlist>
+  <para>
+    Pi-forall's type system is certainly its most interesting part and
+    in the center of Stephanie's discussion: how the typing rules can be
+    broken down into corresponding checking and inference rules, and are
+    reflected in the implementation.
+  </para>
+  <para>
+    One aspect of Pi-forall's <emphasis>implementation</emphasis>
+    should be mentioned as well however: heavy use is made of the
+    <emphasis>Unbound</emphasis> library internally, also developed by
+    Stephanie Weirich, together with Brent Yorgey, which handles many
+    things automatically that otherwise would be laboursome to
+    implement:
+  </para>
+  <itemizedlist>
+    <listitem>
+      <para>
+        binding of variables (by means of Church encodings)
+      </para>
+    </listitem>
+    <listitem>
+      <para>
+        alpha equivalence
+      </para>
+    </listitem>
+    <listitem>
+      <para>
+        finding free variables
+      </para>
+    </listitem>
+    <listitem>
+      <para>
+        substitution, and more.
+      </para>
+    </listitem>
+  </itemizedlist>
+
+</section>
+
+
+
+
+<!-- Local Variables: -->
+<!-- mode:nxml -->
+<!-- End: -->

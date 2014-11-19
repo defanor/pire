@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8" ?>
+
+<!--  -->
+
+<article
+    xmlns="http://docbook.org/ns/docbook"
+    xmlns:xl="http://www.w3.org/1999/xlink"
+    xmlns:xi="http://www.w3.org/2001/XInclude"
+    version="5.0"
+    xml:lang="en"
+    >
+  
+  <!-- 
+       inline benutzt 
+       
+       function, classname, returnvalue, literal, type
+       varname
+       
+       hs module -> classname
+       
+       hs data (datatype) -> classname
+       selectors -> methodname
+       
+       systemitem class="library"
+       
+       filename
+       filename class="directory"
+       
+       command
+  -->
+
+
+  <title>Pire</title>
+  <subtitle>Aiming to become Pi-forall's Refactorer, so far just another Pi-forall Parser</subtitle>
+
+  <info>
+
+    <author>
+     <personname>
+       <firstname>Andreas</firstname>
+       <surname>Reuleaux</surname>
+     </personname>
+     <email>a.reuleaux@kent.ac.uk</email>
+     <email>ar414@kent.ac.uk</email>
+     <email>andreas@a-rx.net</email>
+     <!-- <uri>http://a-rx.net</uri> -->
+    </author>
+
+    <pubdate>November 2014</pubdate>
+
+  </info>
+
+   <xi:include href="intro.dbk"/>
+   <xi:include href="pi101.dbk"/>
+   <xi:include href="src+install.dbk"/>
+   <xi:include href="parsec.dbk"/>
+   <xi:include href="tour.dbk"/>
+
+
+
+
+</article>
+
+
+
+
+<!-- Local Variables: -->
+<!-- mode:nxml -->
+<!-- End: -->

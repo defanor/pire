@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+
+<section
+    xmlns="http://docbook.org/ns/docbook" version="5.0"
+    xmlns:xi="http://www.w3.org/2001/XInclude"
+    >
+
+  <title>Pire: Source code and Installation</title>
+
+
+  <para>
+    While Pire could exist separately from Pi-forall (or at least rely on
+    only parts of it), it was convenient to have all of Pi-forall's source
+    code at hand.
+  </para>
+
+  <para>
+    The source code is therefore a complete copy of Pi-forall's source
+    code from the solutions directory of Stephanie's OPLSS14
+    code, with Pire's modules added, all starting with
+    <classname>Re</classname> (for
+    "refactoring").
+  </para>
+  
+  <para>
+    Pire's cabal file started out as Pi-forall's cabal file with some
+    additional requirements (for Trifecta etc).
+  </para>
+
+  <para>
+    Installation works for me in a cabal sandbox on a Debian jessie (= testing)
+    system, ie. with ghc 7.6.3 currently, and relying heavily on quite some
+    additional Haskell packages, installed not via cabal, but as Debian packages.
+  </para>
+
+  <para>
+    I find the Debian Haskell packages well maintained and easy to
+    install, and enjoy the comfort of getting updates automatically once
+    in a while, and am willing therefore to at times sacrifice having the
+    newest version from hackage. This is reflected in the relatively
+    relaxed version bounds of the packages required, eg. requiring
+    trifecta to be just just >= 1.4.3, would make Debian's version still
+    acceptable, even though there is a newer version: 1.5.1 already
+    available on hackage. - I have
+    relaxed the upper bounds for Pi-forall's original requirements as well:
+    not sure if it was wise to do so, but will see.
+  </para>
+  
+  <para>
+    I plan to maintain the code in this "easy to install on Debian
+    testing" manner, ie. not switch to Trifecta 1.5.1 eg. before
+    version 1.5.1 enters Debian testing, unless there is a striking
+    reason to use this newer version from hackage today already. The
+    files in the install directory starting with
+    <filename>pre</filename> (for "precondition") are merely a
+    reminder for me, what packages should be installed via cabal
+    (starting with <filename>pre-hs-</filename>), or from Debian
+    (starting with <filename>pre-deb-</filename>).
+  </para>
+  
+  <para>
+    Being aware that these Debian requirements may render the installation
+    incomplete as a self-contained pure Haskell (cabal) installation, I
+    would think that there are packages available on other systems similar
+    to the Debian ones, and requirements, version numbers, bounds
+    etc. should get some more tweaking in the future.
+  </para>
+  
+
+</section>
+
+
+<!-- Local Variables: -->
+<!-- mode:nxml -->
+<!-- End: -->

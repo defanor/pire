@@ -1,0 +1,25 @@
+-- -*- haskell -*-
+-- SimpleSample.pi
+
+module Fac where
+
+
+data Nat : Type where
+  Zero
+  Succ of (Nat)
+
+two : Nat
+two = Succ (Succ Zero)
+
+
+nat_leq : Nat -> Nat -> Bool
+nat_leq = \ x y .
+  case x of 
+     Zero -> True
+     Succ m -> case y of 
+            Zero -> False
+            Succ n -> nat_leq m n
+
+fac: Nat -> Nat
+fac = \n . if nat_leq n 0 then 1 else mult n (fac (minus n 1))
+             

@@ -1,0 +1,25 @@
+-- -*- haskell -*-
+
+
+-- PI library for natural numbers
+--
+-- Some of these are adapted from Trellys examples
+--
+-- Author: Stephanie Weirich
+--
+
+module Nat2 where
+
+data Nat : Type where
+  Zero
+  Succ of (Nat)
+
+
+
+-- disp $ fromSuccess $ parseString (runInnerParser $ runFreshMT $ evalStateT (whiteSpace *> expr) piPrelude) top " (m:Nat) -> (n:Nat) -> m = n -> ((Succ m : Nat) = Succ n) "
+
+  
+m_eq_n_Sm_eq_Sn : (m:Nat) -> (n:Nat) -> m = n -> ((Succ m : Nat) = Succ n)
+m_eq_n_Sm_eq_Sn = \m n pf . 
+  subst refl by pf 
+

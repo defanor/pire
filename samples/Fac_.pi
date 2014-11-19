@@ -1,0 +1,123 @@
+module Fac where
+
+
+
+-- nat_leq : Int -> Int -> Bool
+
+-- nat_leq = \ x y .
+--   case x of 
+--      Zero -> True
+--      Succ m -> case y of 
+--                   Zero -> False
+--                   Succ n -> nat_leq m n
+
+-- fkt so aber nur, wenn Nat mit Succ n definiert
+
+-- f : Int -> Bool
+
+-- f = \x . case x of 
+--        Zero -> True
+--        Succ m -> False
+
+
+
+-- g : Bool -> Nat     
+
+-- g = \x . case x of 
+--        True -> Zero
+--        False -> Succ Zero
+
+
+
+
+-- case x of 
+--        True -> Zero
+--        False -> Succ Zero
+
+
+-- case x of 
+--        x -> as
+--        asdjkfhasdfasdf -> Succ Zero
+
+
+
+
+-- False -> Succ Zero
+
+
+-- match 
+-- x -> Succ Zero
+
+
+import Nat
+
+-- data Nat : Type where
+--   Zero
+--   Succ of (Nat)
+
+
+
+
+-- is_zero : Nat -> Bool
+
+-- is_zero = \ x . case x of 
+--   Zero -> True
+--   Succ n -> False
+
+
+
+
+
+
+-- data Nat : Type where
+--   Zero
+--   Succ of (Nat)
+
+
+-- f = \ x .    
+--   case x of 
+--      Zero -> True
+--      Succ n -> False
+
+
+
+-- case x of 
+--    foo -> True
+--    bar -> False
+
+
+
+-- case x of 
+--   z -> a b
+--   h -> z (a b)
+
+
+
+-- ok : Bool
+
+
+-- case k of 
+--   a
+--   a
+--   c
+--   if x then y else z
+
+
+  
+-- y -> 2
+   -- z -> 7
+
+
+     
+
+--   Succ m -> False
+
+  
+-- zero : Bool -> Nat  
+
+-- if nat_leq n 0 then True else False
+
+-- fac: Nat -> Nat
+
+-- fac = \n . if nat_leq n 0 then 1 else mult n (fac (minus n 1))
+

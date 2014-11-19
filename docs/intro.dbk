@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8" ?>
+
+<!--  -->
+
+<section
+    xmlns="http://docbook.org/ns/docbook"
+    xmlns:xi="http://www.w3.org/2001/XInclude"
+    xmlns:xl="http://www.w3.org/1999/xlink"
+    >
+
+
+  <title>Introduction</title>
+
+  <para>
+    Pi-forall is a small dependently typed programming language
+    developed by Stephanie Weirich, mainly for educational purposes,
+    implemented in Haskell.
+  </para>
+
+
+  
+  <para>
+    While less powerful than its better known cousins (Idris, Agda,
+    Coq etc.), its internals may be more easily comprehensible than
+    theirs, due to its small size (lines of code), but thanks also to
+    Stephanie's great OPLSS lectures in <link
+    xl:href="https://www.cs.uoregon.edu/research/summerschool/summer13/curriculum.html">2013</link>
+    and <link
+    xl:href="https://www.cs.uoregon.edu/research/summerschool/summer14/curriculum.html">2014</link>,
+    where she presented Pi-forall in a step by step manner. Thus there
+    are several different versions available, and the one considered
+    here is the final version, in the soln (=solutions) directory ie.,
+    of the <link
+    xl:href="https://github.com/sweirich/pi-forall/tree/2014">code</link>
+    accompanying her OPLSS14 presentation.
+  </para>
+
+  
+  <para>
+    Interesting therefore also as the target of some refactoring
+    efforts, Pire aims to become Pi-foralls refactorer (pronounced any
+    way you wish: "pi-re" for "Pi-forall refactorer", or just "pire"
+    like "hire", and in French it sounds even worse :-)). At this point
+    it is merely a different parser for Pi-forall, however:
+  </para>
+  
+   <itemizedlist>
+
+     <listitem>
+       <para>
+	 While Pi-forall's original parser is written in
+	 <emphasis>Parsec</emphasis>, Edward Kmett's
+	 <emphasis>Trifecta</emphasis> is used (as in Idris).
+       </para>
+     </listitem>
+
+     <listitem>
+       <para>
+	 Even though in most cases Trifecta could be used as a drop-in
+	 replacement for Parsec (the code could just be copied), there are
+	 some differences in the overall structure and handling of the
+	 parser: examples are given below, and layout parsing notably is
+	 handled differently (internally, stolen from Idris ie., rather
+	 than with LayoutToken.hs).
+       </para>
+     </listitem>
+
+     <listitem>
+       <para>
+	 More important, and that is really the whole point of this effort:
+	 Besides this reimplementation of Pi-forall's (abstract
+	 syntax) parser in Trifecta, there is a second parser that aims at
+	 parsing Pi-forall's concrete syntax, preserving white space and
+	 comments, and (together with a modified pretty-printer) should
+	 therefore be better suited for refactoring.
+       </para>
+     </listitem>
+
+   </itemizedlist>
+   
+
+</section>
+
+
+
+
+<!-- Local Variables: -->
+<!-- mode:nxml -->
+<!-- End: -->

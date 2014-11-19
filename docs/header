@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<xsl:stylesheet 
+    version="1.0"
+    xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+    xmlns:fo="http://www.w3.org/1999/XSL/Format"
+    
+    xmlns:d="http://docbook.org/ns/docbook"
+    exclude-result-prefixes="d"
+    >
+
+
+  <!-- header 
+       
+       http://www.sagehill.net/docbookxsl/PrintHeaders.html
+  -->
+
+
+  <xsl:param name="header.column.widths">2 1 5</xsl:param>
+
+  <!-- <xsl:param name="header.column.widths">1 6 1</xsl:param> -->
+
+  <xsl:template name="head.sep.rule">
+    <xsl:param name="pageclass"/>
+    <xsl:param name="sequence"/>
+    <xsl:param name="gentext-key"/>
+    
+    <xsl:if test="$header.rule != 0">
+
+      <xsl:choose>
+
+
+	<xsl:when test="$sequence='first'">
+	</xsl:when>
+
+	<xsl:when test="1=0">
+	</xsl:when>
+
+	<xsl:otherwise>
+      
+	  <xsl:attribute name="border-bottom-width">0.5pt</xsl:attribute>
+	  <xsl:attribute name="border-bottom-style">solid</xsl:attribute>
+	  <xsl:attribute name="border-bottom-color">black</xsl:attribute>
+	  
+	</xsl:otherwise>
+      </xsl:choose>
+    </xsl:if>
+  </xsl:template>
+  
+
+  
+
+  <!-- aus fo/pagesetup.xsl 
+       okt2010
+  -->
+  <xsl:template name="header.content">
+    <xsl:param name="pageclass" select="''"/>
+    <xsl:param name="sequence" select="''"/>
+    <xsl:param name="position" select="''"/>
+    <xsl:param name="gentext-key" select="''"/>
+    
+  
+    <fo:block>
+      <!-- pageclass can be front, body, back -->
+      <!-- sequence can be odd, even, first, blank -->
+      <!-- position can be left, center, right -->
+
+      <xsl:attribute name="font-family">Helvetica</xsl:attribute>
+      <xsl:attribute name="font-size">9pt</xsl:attribute>
+
+      <xsl:choose>
+
+	<!-- <xsl:when test="$sequence='first' and $position='left'"> -->
+	<!--   <xsl:text>A. Reuleaux</xsl:text> -->
+	<!-- </xsl:when> -->
+
+
+	
+	<xsl:when test="$sequence='first'">
+	  <!-- -->
+	</xsl:when>
+
+
+	<xsl:when test="$position='left'">
+	  <!-- <xsl:text>Andreas Reuleaux</xsl:text> -->
+	  <xsl:apply-templates select="." mode="titleabbrev.markup" /> 
+	</xsl:when>
+
+	<!-- 
+	     evt marker.section.level setzen (default: 2)
+	-->
+
+	<xsl:when test="$position='right'">
+	  <fo:retrieve-marker 
+	      retrieve-class-name="section.head.marker"
+	      retrieve-position="first-including-carryover"
+	      retrieve-boundary="page-sequence"/>
+	</xsl:when>
+	
+	
+	
+	<xsl:otherwise>
+	  <!-- nop -->
+	</xsl:otherwise>
+      </xsl:choose>
+    </fo:block>
+  </xsl:template>
+  
+
+
+  
+</xsl:stylesheet>

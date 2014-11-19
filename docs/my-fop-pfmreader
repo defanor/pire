@@ -1,0 +1,27 @@
+#!/bin/sh
+
+
+# rx - mai2011
+# abgeguckt von /usr/bin/ttf-reader aus deb pkg fop
+
+
+# Shell script wrapper around the fop-ttfreader program,
+# Copyright 2008 by Vincent Fourmond <fourmond@debian.org>
+#
+# Licensed under the same terms as fop itself, that is under
+# the conditions of the Apache 2 licencee.
+
+# Include the wrappers utility script
+. /usr/lib/java-wrappers/java-wrappers.sh
+
+
+# We prefer to use openjdk or Sun's java if available
+find_java_runtime openjdk sun  || find_java_runtime 
+
+find_jars commons-io avalon-framework serializer xalan2 xml-apis 
+find_jars batik-all commons-logging servlet-api xercesImpl xmlgraphics-commons
+find_jars fop
+
+
+# run_java org.apache.fop.fonts.apps.TTFReader  "$@"
+run_java org.apache.fop.fonts.apps.PFMReader  "$@"

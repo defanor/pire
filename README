@@ -1,0 +1,37 @@
+Pire (aiming to become *Pi*-forall *re*factorer) builds upon Stephanie
+Weirich's Pi-forall.
+
+Pi-forall's original source code is included to facilitate development
+(the code is just copied though, ie. Pire is not a Pi-forall branch
+currently, to keep it simple).
+
+There is a clear distinction between Pi-forall original source code, 
+and Pire's own code (only few modifications have been made so far), 
+and some naming conventions were thus established:
+
+ * The files in the src directory NOT STARTING WITH "Re" (for
+   refactoring), are Pi-foralls original source code files (and as
+   such covered by their original license, University of
+   Pennsylvania).
+
+ * The ones in the src directory STARTING WITH "Re" are Pire's own
+   source code, covered by the same kind of license, University of
+   Kent).
+
+But other files are copied from Pi-forall's source code as well
+(eg. in the test and samples directories), or modified versions 
+of Pi-forall's original files (pire.cabal eg.). Tests are for
+Pi-forall's original code only currently, but are planned
+for pire as well.
+
+Some code snippets were used from other sources still:
+
+ * notably the functions for layout parsing from the Idris source
+   code,
+
+ * as well as the xslt*.rnc (RelaxNG grammar files) for the docbook
+   documentation from Norman Walsh 
+   (https://github.com/ndw/xslt-relax-ng).
+
+Please find further documentation (as docbook source, html, and pdf) 
+in the docs directory.

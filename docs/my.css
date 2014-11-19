@@ -1,0 +1,21 @@
+
+
+
+pre.programlisting {
+  background-color: #F4f4f4 ;
+  border: 0px solid #006600 ;
+
+  padding: 0.5em;
+  
+  /* g: css +wrap +pre 
+     -> 
+     http://labnol.blogspot.com/2006/10/html-css-trick-for-displaying-code.html
+   */
+
+  
+  white-space: pre-wrap; /* css-3 */
+  white-space: -moz-pre-wrap !important; /* Mozilla, since 1999 */
+  white-space: -pre-wrap; /* Opera 4-6 */
+  white-space: -o-pre-wrap; /* Opera 7 */
+  word-wrap: break-word; /* Internet Explorer 5.5+ */
+}

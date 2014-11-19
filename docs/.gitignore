@@ -1,0 +1,29 @@
+
+
+
+
+
+# ...but want shake files here
+!Build.hs
+!build.hs
+
+
+fonts
+palatino
+palatinoi
+lucidatypewriter
+urwclassico
+optima
+
+
+pdf
+*.pdf
+*.fo
+
+
+html
+*.html
+
+
+# mytitlepage-fo.Xml
+*.Xml

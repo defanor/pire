@@ -1,0 +1,60 @@
+module Fac where
+
+
+import Nat
+
+-- import Foo
+
+-- nat_eq, plus, times, minus from Nat
+
+
+-- adapted from nat_eq in Nat
+-- cf also http://mazzo.li/posts/AgdaSort.html
+
+
+data Nat : Type where
+  Zero
+  Succ of (Nat)
+
+
+two : Nat
+two = Succ (Succ Zero)
+-- 2 seems to be defined already (?)
+-- -> in Syntax.hs
+
+-- two = 2
+
+
+
+
+nat_leq : Nat -> Nat -> Bool
+nat_leq = \ x y .
+  case x of 
+     Zero -> True
+     Succ m -> case y of 
+            Zero -> False
+            Succ n -> nat_leq m n
+
+
+-- nat_leq : Nat -> Nat -> Bool
+-- nat_leq = \ x y .
+--   case x of 
+--      Zero -> True
+--      Succ m -> False 
+
+  
+  
+
+fac: Nat -> Nat
+fac = \n . if nat_leq n 0 then 1 else mult n (fac (minus n 1))
+
+
+             
+foo: Nat -> Nat
+foo = \n. fac (mult 2 n)
+
+
+                    
+bar: Nat -> Nat
+bar = \n. let fac = ((\x . plus x 2) : Nat -> Nat) in plus (foo n) (fac (mult 3 n))
+

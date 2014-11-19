@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<xsl:stylesheet 
+    version="1.0"
+    xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+    xmlns:fo="http://www.w3.org/1999/XSL/Format"
+    
+    xmlns:d="http://docbook.org/ns/docbook"
+    exclude-result-prefixes="d"
+    >
+
+
+
+
+  <!-- footer -->
+
+  <xsl:param name="footer.rule">0</xsl:param>
+
+
+  <!-- aus fo/pagesetup.xsl 
+       okt2010
+       p auf die rechte Seite
+  -->
+  <xsl:template name="footer.content">
+    <xsl:param name="pageclass" select="''"/>
+    <xsl:param name="sequence" select="''"/>
+    <xsl:param name="position" select="''"/>
+    <xsl:param name="gentext-key" select="''"/>
+    
+  
+    <fo:block>
+      <!-- pageclass can be front, body, back -->
+      <!-- sequence can be odd, even, first, blank -->
+      <!-- position can be left, center, right -->
+      <xsl:choose>
+	<xsl:when test="$position='right'">
+	  <xsl:attribute name="font-weight">bold</xsl:attribute>
+	  <xsl:attribute name="font-family">Helvetica</xsl:attribute>
+	  <fo:page-number/>
+	</xsl:when>
+	
+	
+	<xsl:otherwise>
+	  <!-- nop -->
+	</xsl:otherwise>
+      </xsl:choose>
+    </fo:block>
+  </xsl:template>
+
+
+
+  
+</xsl:stylesheet>

@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<fop>
+  <renderers>
+    <renderer mime="application/pdf">
+      <fonts>
+ 
+       <!-- font metrics-url="/fonts/dejavu-ttf-2.5/DejaVuSans.ttf.xml" 
+	     embed-url="fonts/dejavu-ttf-2.5/DejaVuSans.ttf">
+	 <font-triplet name="DejaVuSans" style="normal" weight="normal"/>
+       </font -->
+
+
+       <font 
+	    metrics-url="./palatino" 
+	    kerning="yes" 
+	    embed-url="/home/rx/myfonts/oldstyle/PalatinoLinotype.ttf">
+	  <font-triplet 
+	      name="Palatino" 
+	      style="normal" 
+	      weight="normal"
+	      />
+       </font>
+       <!-- register all the fonts found in a directory -->
+
+
+	<!-- directory>C:\MyFonts1</directory --> 
+
+
+
+
+
+	<!-- eigentlich file:///path/to/file.xml -->
+	<font 
+	    metrics-url="./palatinoi" 
+	    kerning="yes" 
+	    embed-url=
+	    "/home/rx/myfonts/oldstyle/PalatinoLinotypeItalic.ttf">
+	  <font-triplet 
+	      name="Palatino" 
+	      style="italic" 
+	      weight="normal"
+	      />
+	</font>
+
+
+
+       <font 
+	    metrics-url="./optima" 
+	    kerning="yes" 
+	    embed-url="/home/rx/myfonts/sans-serif/optima/OptimumRoman.ttf">
+	  <font-triplet 
+	      name="Optima" 
+	      style="normal" 
+	      weight="normal"
+	      />
+       </font>
+       
+
+
+
+       <font 
+	    metrics-url="./lucidatypewriter" 
+	    kerning="yes" 
+	    embed-url="/home/rx/myfonts/typewriter/ttf-lucida/LucidaTypewriterRegular.ttf">
+	  <font-triplet 
+	      name="LucidaTypewriter" 
+	      style="normal" 
+	      weight="normal"
+	      />
+       </font>
+       <!-- register all the fonts found in a directory -->
+
+
+
+
+         <!-- 
+            hier pfb in type1 (not pfm) 
+            
+            
+       -->
+       <font 
+           metrics-url="./urwclassico" 
+           kerning="yes" 
+           embed-url="/home/rx/myfonts/sans-serif/urwclassico/fonts/type1/urw/optima/uopr8a.pfb">
+          <font-triplet 
+              name="URWClassico" 
+              style="normal" 
+              weight="normal"
+              />
+       </font>
+       
+
+
+
+
+
+      </fonts>
+    </renderer>
+  </renderers>
+</fop>
+
+
+
+
+
+<!-- Local Variables: -->
+<!-- mode:nxml -->
+<!-- End: -->

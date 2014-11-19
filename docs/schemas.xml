@@ -1,0 +1,26 @@
+
+
+
+<locatingRules xmlns="http://thaiopensource.com/ns/locating-rules/1.0">
+
+  <!-- this is where they live on debian jessie -->
+
+  <namespace ns="http://docbook.org/ns/docbook"
+  	     uri="/usr/share/xml/docbook/schema/rng/5.0/docbookxi.rnc"/>
+
+
+  <!--
+      for opening .xsl files in emacs
+  -->
+  <namespace ns="http://www.w3.org/1999/XSL/Transform"
+  	     uri="./xslt.rnc"/>
+
+
+
+</locatingRules>
+
+
+
+<!-- Local Variables: -->
+<!-- mode: nxml -->
+<!-- End: -->
