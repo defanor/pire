@@ -19,10 +19,9 @@ and some naming conventions were thus established:
    Kent).
 
 But other files are copied from Pi-forall's source code as well
-(eg. in the test and samples directories), or modified versions 
-of Pi-forall's original files (pire.cabal eg.). Tests are for
-Pi-forall's original code only currently, but are planned
-for pire as well.
+(eg. in the test and samples directories), or modified from
+Pi-forall's original files (pire.cabal eg.). Tests are for Pi-forall's
+original code only currently, but are planned for pire as well.
 
 Some code snippets were used from other sources still:
 
@@ -33,6 +32,8 @@ Some code snippets were used from other sources still:
    documentation from Norman Walsh 
    (https://github.com/ndw/xslt-relax-ng).
 
+At this time Pire offers merely a different parser for
+for Pi-forall.
+
 Please find further documentation in the docs directory as docbook
 source files, and under releases as html, pdf.
-
