@@ -32,7 +32,7 @@ Some code snippets were used from other sources still:
    documentation from Norman Walsh 
    (https://github.com/ndw/xslt-relax-ng).
 
-At this time Pire offers merely a different parser for
+At this time Pire merely offers a different parser for
 for Pi-forall.
 
 Please find further documentation in the docs directory.
