@@ -50,6 +50,7 @@ Ok, modules loaded: Syntax, PrettyPrint, ReParse, ReSyntax, RePP.
   
 
   
+  
   <para>
     Now parse the identifier in the white space aware parser,
     ie. including the whitespace following it
@@ -158,5 +159,11 @@ Lam' (Ws "") (<(n,{Annot' Nothing (Ws " ")})> If' (Ws " ") (App' (App' (Var' nat
 parseTest (runInnerParser $ runFreshMT $ evalStateT (whiteSpace *> expr) piInit ) "   \\n . if nat_leq n 0 then 1 else mult n (fac (minus n 1))  "
   :: MonadIO m => m ()
   *ReParse >]]></programlisting>
+
+      
+  <para>
+    To be continued...
+  </para>
+
   
 </section>

@@ -1,0 +1,527 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /><title>Pire</title><link rel="stylesheet" type="text/css" href="my.css" /><meta name="generator" content="DocBook XSL Stylesheets V1.78.1" /></head><body><div xml:lang="en" class="article" lang="en"><div class="titlepage"><div><div><h2 class="title"><a id="idp12643152"></a>Pire</h2></div><div><h3 class="subtitle"><em>Aiming to become Pi-forall's Refactorer, so far just another Pi-forall Parser</em></h3></div><div><div class="author"><h3 class="author"><span class="firstname">Andreas</span> <span class="surname">Reuleaux</span></h3><code class="email">&lt;<a class="email" href="mailto:a.reuleaux@kent.ac.uk">a.reuleaux@kent.ac.uk</a>&gt;</code><code class="email">&lt;<a class="email" href="mailto:ar414@kent.ac.uk">ar414@kent.ac.uk</a>&gt;</code><code class="email">&lt;<a class="email" href="mailto:andreas@a-rx.net">andreas@a-rx.net</a>&gt;</code></div></div><div><p class="pubdate">November 2014</p></div></div><hr /></div><div class="toc"><p><strong>Table of Contents</strong></p><dl class="toc"><dt><span class="section"><a href="#idp38546416">Introduction</a></span></dt><dt><span class="section"><a href="#idp38555136">Pi-forall 101</a></span></dt><dt><span class="section"><a href="#idp38577920">Pire: Source code and Installation</a></span></dt><dt><span class="section"><a href="#idp38585328">Pi-forall's Parsec parser</a></span></dt><dt><span class="section"><a href="#idp38661136">The Trifecta parsers: a tour</a></span></dt></dl></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="idp38546416"></a>Introduction</h2></div></div></div><p>
+    Pi-forall is a small dependently typed programming language
+    developed by Stephanie Weirich, mainly for educational purposes,
+    implemented in Haskell.
+  </p><p>
+    While less powerful than its better known cousins (Idris, Agda,
+    Coq etc.), its internals may be more easily comprehensible than
+    theirs, due to its small size (lines of code), but thanks also to
+    Stephanie's great OPLSS lectures in <a class="link" href="https://www.cs.uoregon.edu/research/summerschool/summer13/curriculum.html" target="_top">2013</a>
+    and <a class="link" href="https://www.cs.uoregon.edu/research/summerschool/summer14/curriculum.html" target="_top">2014</a>,
+    where she presented Pi-forall in a step by step manner. Thus there
+    are several different versions available, and the one considered
+    here is the final version, in the soln (=solutions) directory ie.,
+    of the <a class="link" href="https://github.com/sweirich/pi-forall/tree/2014" target="_top">code</a>
+    accompanying her OPLSS14 presentation.
+  </p><p>
+    Interesting therefore also as the target of some refactoring
+    efforts, Pire aims to become Pi-foralls refactorer (pronounced any
+    way you wish: "pi-re" for "Pi-forall refactorer", or just "pire"
+    like "hire", and in French it sounds even worse :-)). At this point
+    it is merely a different parser for Pi-forall, however:
+  </p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p>
+	 While Pi-forall's original parser is written in
+	 <span class="emphasis"><em>Parsec</em></span>, Edward Kmett's
+	 <span class="emphasis"><em>Trifecta</em></span> is used (as in Idris).
+       </p></li><li class="listitem"><p>
+	 Even though in most cases Trifecta could be used as a drop-in
+	 replacement for Parsec (the code could just be copied), there are
+	 some differences in the overall structure and handling of the
+	 parser: examples are given below, and layout parsing notably is
+	 handled differently (internally, stolen from Idris ie., rather
+	 than with LayoutToken.hs).
+       </p></li><li class="listitem"><p>
+	 More important, and that is really the whole point of this effort:
+	 Besides this reimplementation of Pi-forall's (abstract
+	 syntax) parser in Trifecta, there is a second parser that aims at
+	 parsing Pi-forall's concrete syntax, preserving white space and
+	 comments, and (together with a modified pretty-printer) should
+	 therefore be better suited for refactoring.
+       </p></li></ul></div></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="idp38555136"></a>Pi-forall 101</h2></div></div></div><p>
+    Starting from just the bare minimum of language constructs:
+  </p><pre class="programlisting">a, A := 
+  x            -- variables
+  \x . a       -- lambda abstraction
+  x b          -- function application
+  (x: A) -&gt; B  -- function type constructor (aka pi-types) 
+  x: Type      -- the type of types</pre><p>
+    Pi-forall is presented at various stages of increasing complexity in
+    the course of Stephanie's discussion:
+  </p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p>
+        More language constructs are added: type annotations, sigma
+        types, propositional equality etc.
+      </p></li><li class="listitem"><p>
+        The notion of (definitional) equality is refined from initially
+        just alpha equivalence to beta-equivalence later.
+      </p></li><li class="listitem"><p>
+        Constructors for new data types are introduced.
+      </p></li></ul></div><p>
+    The language is a real dependently typed language:
+  </p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p>
+        in that types are just expressions (by convention lower case
+        letters are used for expressions, upper case letters for types)
+      </p></li><li class="listitem"><p>
+        function type constructors (aka pi-types) are binders (the
+        <code class="literal">x</code> in <code class="literal">(x: A) -&gt; B</code> can
+        appear in <code class="literal">B</code>)
+      </p></li><li class="listitem"><p>
+        any type has type <code class="literal">Type</code> (the "type in
+        type"-axiom), a simple rule to make Pi-forall's type system
+        consistent (but inconsistent as a logic, not taking into account
+        different universe levels).
+      </p></li></ul></div><p>
+    The language is somehow limited:
+  </p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p>
+        in that there are nor checks for totality or termination,
+      </p></li><li class="listitem"><p>
+        there is no means to execute Pi-forall programs currently
+      </p></li><li class="listitem"><p>
+        there are no (proof) tactics .
+      </p></li></ul></div><p>
+    At the same time some aspects of Pi-forall are relatively
+    elaborated:
+  </p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p>
+        the notion of beta-equivalence for definitional equality eg., as
+        mentioned above.
+      </p></li><li class="listitem"><p>
+        Variables can be marked as <span class="emphasis"><em>erasable</em></span>, ie.
+        needed only for type checking, not at runtime. (Those are
+        different from <span class="emphasis"><em>implicit arguments</em></span>: there
+        aren't any implicit arguments allowed in Pi-forall).
+      </p></li><li class="listitem"><p>
+        A simple module system is provided.
+      </p></li></ul></div><p>
+    Pi-forall's type system is certainly its most interesting part and
+    in the center of Stephanie's discussion: how the typing rules can be
+    broken down into corresponding checking and inference rules, and are
+    reflected in the implementation.
+  </p><p>
+    One aspect of Pi-forall's <span class="emphasis"><em>implementation</em></span>
+    should be mentioned as well however: heavy use is made of the
+    <span class="emphasis"><em>Unbound</em></span> library internally, also developed by
+    Stephanie Weirich, together with Brent Yorgey, which handles many
+    things automatically that otherwise would be laboursome to
+    implement:
+  </p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p>
+        binding of variables (by means of Church encodings)
+      </p></li><li class="listitem"><p>
+        alpha equivalence
+      </p></li><li class="listitem"><p>
+        finding free variables
+      </p></li><li class="listitem"><p>
+        substitution, and more.
+      </p></li></ul></div></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="idp38577920"></a>Pire: Source code and Installation</h2></div></div></div><p>
+    While Pire could exist separately from Pi-forall (or at least rely on
+    only parts of it), it was convenient to have all of Pi-forall's source
+    code at hand.
+  </p><p>
+    The source code is therefore a complete copy of Pi-forall's source
+    code from the solutions directory of Stephanie's OPLSS14
+    code, with Pire's modules added, all starting with
+    <code class="classname">Re</code> (for
+    "refactoring").
+  </p><p>
+    Pire's cabal file started out as Pi-forall's cabal file with some
+    additional requirements (for Trifecta etc).
+  </p><p>
+    Installation works for me in a cabal sandbox on a Debian jessie (= testing)
+    system, ie. with ghc 7.6.3 currently, and relying heavily on quite some
+    additional Haskell packages, installed not via cabal, but as Debian packages.
+  </p><p>
+    I find the Debian Haskell packages well maintained and easy to
+    install, and enjoy the comfort of getting updates automatically once
+    in a while, and am willing therefore to at times sacrifice having the
+    newest version from hackage. This is reflected in the relatively
+    relaxed version bounds of the packages required, eg. requiring
+    trifecta to be just just &gt;= 1.4.3, would make Debian's version still
+    acceptable, even though there is a newer version: 1.5.1 already
+    available on hackage. - I have
+    relaxed the upper bounds for Pi-forall's original requirements as well:
+    not sure if it was wise to do so, but will see.
+  </p><p>
+    I plan to maintain the code in this "easy to install on Debian
+    testing" manner, ie. not switch to Trifecta 1.5.1 eg. before
+    version 1.5.1 enters Debian testing, unless there is a striking
+    reason to use this newer version from hackage today already. The
+    files in the install directory starting with
+    <code class="filename">pre</code> (for "precondition") are merely a
+    reminder for me, what packages should be installed via cabal
+    (starting with <code class="filename">pre-hs-</code>), or from Debian
+    (starting with <code class="filename">pre-deb-</code>).
+  </p><p>
+    Being aware that these Debian requirements may render the installation
+    incomplete as a self-contained pure Haskell (cabal) installation, I
+    would think that there are packages available on other systems similar
+    to the Debian ones, and requirements, version numbers, bounds
+    etc. should get some more tweaking in the future.
+  </p></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="idp38585328"></a>Pi-forall's Parsec parser</h2></div></div></div><p>
+    While Pi-forall's parser is arguably its least interesting part (and
+    barely mentioned in Stephanie's lectures) parsing is the starting
+    point for any serious implementation (and hence refactoring) work.
+  </p><p>
+    Moreoveer, as the absy parser developed here is merely a rewrite
+    of Pi-forall's <span class="emphasis"><em>Parsec</em></span> parser in
+    <span class="emphasis"><em>Trifecta</em></span>, some examples, of how this Parsec
+    parser can be used, may be worthwhile looking at, both as a Parsec
+    recap, and to get in first touch with some Pi-forall code.
+  </p><p>
+    Say we are given a small Pi-forall input file
+    <code class="classname">Sample.pi</code> with some function declarations:
+  </p><pre class="programlisting">-- -*- haskell -*-
+-- Sample.pi
+
+module Fac where
+
+import Nat
+
+-- data Nat : Type where
+--   Zero
+--   Succ of (Nat)
+
+two : Nat
+two = Succ (Succ Zero)
+
+-- adapted from nat_eq in Nat
+-- cf also http://mazzo.li/posts/AgdaSort.html
+
+nat_leq : Nat -&gt; Nat -&gt; Bool
+nat_leq = \ x y .
+  case x of 
+     Zero -&gt; True
+     Succ m -&gt; case y of 
+            Zero -&gt; False
+            Succ n -&gt; nat_leq m n
+
+fac: Nat -&gt; Nat
+fac = \n . if nat_leq n 0 then 1 else mult n (fac (minus n 1))
+             
+foo: Nat -&gt; Nat
+foo = \n. fac (mult 2 n)
+                    
+bar: Nat -&gt; Nat
+bar = \n. let fac = ((\x . plus x 2) : Nat -&gt; Nat) in plus (foo n) (fac (mult 3 n))
+</pre><p>
+    Never mind too much the details of those declarations at this point,
+    just note a few points:
+  </p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p>
+        The factorial function <code class="function">fac</code> is defined the
+        usual way, and requires the notion of natural numbers
+        (<code class="classname">Nat</code>) together with some operations on them
+        (<code class="function">mult</code>, <code class="function">minus</code>). Those
+        we import from the <code class="classname">Nat</code> module, not shown
+        here, but available with Pi-forall's source as well.
+      </p></li><li class="listitem"><p>
+        We need so few things from <code class="classname">Nat</code> here, that
+        we could have defined them ourselves, the commented out
+        <code class="classname">Nat</code> data type definition gives a taste of
+        what they'd look like, and indeed: doing so was useful when
+        developing the Trifecta parser, as parsing a single file
+        obviously is a easier than handling module imports.
+      </p></li><li class="listitem"><p>
+        Pi-forall allows for Haskell-style comments.
+      </p></li><li class="listitem"><p>
+        The remaining functions may serve as examples for some simple
+	refactorings later.
+      </p></li><li class="listitem"><p>
+        <code class="function">nat_leq</code> (less or equal on naturals) and
+        <code class="function">two</code> exercise the <code class="classname">Nat</code>
+        data type, and note how the <code class="literal">case</code> expression
+        uses layout syntax (as in Haskell), ie. requires layout parsing.
+      </p></li><li class="listitem"><p>
+        The very first <code class="literal">-*- haskell -*-</code> line was just a
+        means for me to get some (Haskell) syntax highlighting in Emacs for
+        Pi-forall programs.
+      </p></li></ul></div><p>
+    The usual way of interacting with Pi-forall is calling its
+    <code class="function">goFilename</code> function in
+    <code class="classname">Main.hs</code>, which parses, typechecks, and
+    pretty-prints the given Pi-forall source file, in the case of
+    <code class="classname">Sample.pi</code> above:
+  </p><pre class="programlisting">*Main &gt; goFilename "/home/reuleaux/etc/th-p/pi/Sample.pi"
+processing Sample.pi...
+Parsing File "/home/reuleaux/etc/th-p/pi/Nat.pi"
+Parsing File "/home/reuleaux/etc/th-p/pi/Sample.pi"
+type checking...
+Checking module "Nat"
+Checking module "Fac"
+module Fac where
+import Nat
+two : Nat
+two = 2
+nat_leq : Nat -&gt; Nat -&gt; Bool
+nat_leq = \x y .
+            case x of
+              Zero -&gt; True
+              (Succ m) -&gt;
+                case y of
+                  Zero -&gt; False
+                  (Succ n) -&gt; nat_leq m n
+fac : Nat -&gt; Nat
+fac = \n . if nat_leq n 0 then 1 else mult n (fac (minus n (1)))
+foo : Nat -&gt; Nat
+foo = \n . fac (mult (2) n)
+bar : Nat -&gt; Nat
+bar = \n .
+        let fac = \x . plus x (2) in plus (foo n) (fac (mult (3) n))
+*Main &gt;</pre><p>
+    As can be seen:
+  </p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p>
+        the output is quite readable and resembles the input, but all
+        the comments are lost, as are the exact levels of indentation,
+        newlines and parenthesis. The result is therefore of limited
+        use for any refactoring efforts only, and this was the reason
+        for developing another white space aware parser.
+      </p></li><li class="listitem"><p>
+        Automatic conversions between different representations, like
+        the one above for <code class="classname">Nat</code> from
+        <code class="literal">Succ (Succ Zero)</code> to <code class="literal">2</code> in
+        the function <code class="function">two</code>, we don't want either
+        for our refactoring purposes.
+      </p></li><li class="listitem"><p>
+        The fact that our <code class="classname">Sample.pi</code> is also
+        typechecked, cannot really be seen in the output above (except
+        for the messages <code class="literal">type checking...</code> etc.), but
+        is important for we don't want to concern ourselves with
+        programs that are syntactically, but not type correct, and type
+        checking gives us a means to ensure that.
+      </p></li></ul></div><p>
+    While <code class="function">goFilename</code> is a convenient way to parse,
+    typecheck and pretty-print our Pi-forall code all in one go,
+    sometimes we want more fine grained control, want to see
+    intermediate results, the abstract syntax tree ie..
+  </p><p>
+    The following examples are meant as hints, how to "look under
+    the hood" and discover more details, rather than as a complete
+    description of the system.
+  </p><p>
+    Given that our <code class="classname">Sample.pi</code> file imports the
+    <code class="classname">Nat</code> module, we cannot use the parsing functions
+    from <code class="classname">Parser.hs</code> directly, but only those from
+    <code class="classname">Module.hs</code> (namely
+    <code class="function">getModules</code>). Cheating at the source code of
+    <code class="function">goFilename</code> we can get the abstract syntax tree
+    of our <code class="classname">Sample.pi</code> file by running
+    <code class="function">getModules</code> in the
+    <code class="classname">Control.Monad.Error</code> monad, like so (only the
+    beginning of the result is shown):
+  </p><pre class="programlisting">*Main &gt; runErrorT (getModules ["/home/reuleaux/etc/th-p/pi/"] "Sample.pi")
+Parsing File "/home/reuleaux/etc/th-p/pi/Nat.pi"
+Parsing File "/home/reuleaux/etc/th-p/pi/Sample.pi"
+Right [Module {moduleName = "Nat", moduleImports = [], moduleEntries = [Data "Nat" Empty [ConstructorDef "/home/reuleaux/etc/th-p/pi/Nat.pi" (line 14, column 3) "Zero" Empty,ConstructorDef "/home/reuleaux/etc/th-p/pi/Nat.pi" (line 15, column 3) "Succ" (Cons Runtime _ (Pos "/home/reuleaux/etc/th-p/pi/Nat.pi" ...</pre><p>
+    The result is a list of modules, really: <code class="classname">Nat.pi</code>
+    and <code class="classname">Sample.pi</code>, in the Either monad. Normally
+    we'd be interested only in the <span class="emphasis"><em>last</em></span> module
+    parsed (<code class="classname">Sample.pi</code> ie.), and
+    <code class="function">fromRight'</code> from the
+    <code class="classname">either</code> package is handy for revealing this
+    result (again, only the beginning of the output is shown):
+  </p><pre class="programlisting">*Main &gt; :m +Data.Either.Combinators
+*Main Data.Either.Combinators &gt; runErrorT (getModules ["/home/reuleaux/etc/th-p/pi/"] "Sample.pi") &gt;&gt;= return . last . fromRight'
+Parsing File "/home/reuleaux/etc/th-p/pi/Nat.pi"
+Parsing File "/home/reuleaux/etc/th-p/pi/Sample.pi"
+Module {moduleName = "Fac", moduleImports = [ModuleImport "Nat"], moduleEntries = [Sig two (Pos "/home/reuleaux/etc/th-p/pi/Sample.pi" (line 12, column 7) (TCon "Nat" [])),Def two ...</pre><p>
+    Now we can use <span class="emphasis"><em>disp</em></span> for pretty printing the
+    result:
+  </p><pre class="programlisting">*Main Data.Either.Combinators &gt; runErrorT (getModules ["/home/reuleaux/etc/th-p/pi/"] "Sample.pi") &gt;&gt;= return . disp . last . fromRight'
+Parsing File "/home/reuleaux/etc/th-p/pi/Nat.pi"
+Parsing File "/home/reuleaux/etc/th-p/pi/Sample.pi"
+module Fac where
+import Nat
+two : Nat
+two = 2
+nat_leq : Nat -&gt; Nat -&gt; Bool
+nat_leq = \x y .
+            case x of
+              Zero -&gt; True
+              (Succ m) -&gt;
+                case y of
+                  Zero -&gt; False
+                  (Succ n) -&gt; nat_leq m n
+fac : Nat -&gt; Nat
+fac = \n .
+        if nat_leq n 0 then 1 else mult n ((fac ((minus n (1)))))
+foo : Nat -&gt; Nat
+foo = \n . fac ((mult (2) n))
+bar : Nat -&gt; Nat
+bar = \n .
+        let fac = ((\x . plus x (2)) : Nat -&gt; Nat) in
+        plus ((foo n)) ((fac ((mult (3) n))))
+*Main Data.Either.Combinators &gt;</pre><p>
+    If we were looking at the contents of just a single self-contained
+    file, without any imports of other modules ie., say at a file
+    <code class="classname">SimpleSample.pi</code>:
+  </p><pre class="programlisting">-- -*- haskell -*-
+-- SimpleSample.pi
+
+module Fac where
+
+
+data Nat : Type where
+  Zero
+  Succ of (Nat)
+
+two : Nat
+two = Succ (Succ Zero)
+
+
+nat_leq : Nat -&gt; Nat -&gt; Bool
+nat_leq = \ x y .
+  case x of 
+     Zero -&gt; True
+     Succ m -&gt; case y of 
+            Zero -&gt; False
+            Succ n -&gt; nat_leq m n
+
+fac: Nat -&gt; Nat
+fac = \n . if nat_leq n 0 then 1 else mult n (fac (minus n 1))
+             
+</pre><p>
+    then we could use <code class="function">parseModuleFile</code> from
+    <code class="classname">Parser.hs</code> directly. (We need to provide
+    <code class="function">emptyConstructorNames</code> from
+    <code class="classname">Syntax.hs</code>, so that the parser can collect
+    information about data types and constructors found
+    (<code class="classname">Nat</code>, <code class="methodname">Zero</code>,
+    <code class="methodname">Succ</code>,...) running in the
+    <code class="methodname">State</code> monad internally):
+  </p><pre class="programlisting">*Main Syntax Data.Either.Combinators &gt; runErrorT (parseModuleFile  emptyConstructorNames  "/home/reuleaux/etc/th-p/pi/SimpleSample.pi") &gt;&gt;= return . disp . fromRight'
+Parsing File "/home/reuleaux/etc/th-p/pi/SimpleSample.pi"
+module Fac where
+data Nat : Type where
+  Zero
+  Succ of (_ : Nat)
+two : Nat
+two = 2
+nat_leq : Nat -&gt; Nat -&gt; Bool
+nat_leq = \x y .
+            case x of
+              Zero -&gt; True
+              (Succ m) -&gt;
+                case y of
+                  Zero -&gt; False
+                  (Succ n) -&gt; nat_leq m n
+fac : Nat -&gt; Nat
+fac = \n .
+        if nat_leq n 0 then 1 else mult n ((fac ((minus n (1)))))
+*Main Syntax Data.Either.Combinators &gt;</pre><p>
+    The situation is less complicated (does not require any file I/O) if
+    we just want to parse a string as an expression:
+  </p><pre class="programlisting">*Main Data.Either.Combinators &gt; parseExpr   "   \\x  .  a  "
+Right (Pos "&lt;interactive&gt;" (line 1, column 4) (Lam (&lt;(x,{Annot Nothing})&gt; Pos "&lt;interactive&gt;" (line 1, column 11) (Var a))))
+*Main Data.Either.Combinators &gt; fromRight' $ parseExpr   "   \\x  .  a  "
+Pos "&lt;interactive&gt;" (line 1, column 4) (Lam (&lt;(x,{Annot Nothing})&gt; Pos "&lt;interactive&gt;" (line 1, column 11) (Var a)))
+*Main Data.Either.Combinators &gt;</pre><p>
+    Again, pretty printing is convenient for reading the result:
+  </p><pre class="programlisting">*Main Data.Either.Combinators &gt; disp $ fromRight' $ parseExpr   "   \\x  .  a  "
+\x . a
+*Main Data.Either.Combinators &gt;</pre><p>
+    <code class="classname">Parser.hs</code> exports only
+    <code class="function">parseModuleFile</code> and
+    <code class="function">parseExpr</code>, but we can exercise the individual
+    building blocks of the parser of course, by loading
+    <code class="classname">Parser.hs</code> directly: ie. we can parse
+    expresssions, declarations, signature definitions, variables etc.
+    (shown is parsing an expression):
+  </p><pre class="programlisting">*Parser &gt; runFreshM (evalStateT (runParserT (do { whiteSpace; v &lt;- expr; eof; return v}) [] "&lt;interactive&gt;" " Succ n") emptyConstructorNames)
+Right (Pos "&lt;interactive&gt;" (line 1, column 2) (App (Var Succ) (Var n)))
+*Parser &gt;</pre><p>
+    This time we have to "unpeel the onion" of our monad
+    transformer stack ourselves: the aforementioned
+    <span class="emphasis"><em>StateT</em></span> keeps track of constructor names, and
+    <span class="emphasis"><em>FreshM</em></span> from <code class="classname">unbound</code> is
+    responsible for names and variable bindings.
+  </p><p>
+    Note how, without any further knowledge of
+    <span class="emphasis"><em>Succ</em></span>, <span class="emphasis"><em>Succ n</em></span> is just
+    parsed as a function application. This may not be what we want: An
+    admittedly ad-hoc <code class="function">prelude</code> helps recognizing
+    <span class="emphasis"><em>Succ</em></span> as a data constructor rather than as a
+    regular function:
+  </p><pre class="programlisting">*Parser &gt; let prelude = ConstructorNames (S.fromList ["Nat"]) (S.fromList ["Zero", "Succ"])
+*Parser &gt; runFreshM (evalStateT (runParserT (do { whiteSpace; v &lt;- expr; eof; return v}) [] "&lt;interactive&gt;" " Succ n") prelude)
+Right (Pos "&lt;interactive&gt;" (line 1, column 2) (DCon "Succ" [Arg Runtime (Var n)] (Annot Nothing)))
+*Parser &gt;</pre></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="idp38661136"></a>The Trifecta parsers: a tour</h2></div></div></div><p>
+    Load the parser module <code class="classname">ReParse</code> to start some experiments:
+  </p><pre class="programlisting">reuleaux@softland ~/etc/pire $ cabal repl
+Preprocessing library pire-0.1...
+GHCi, version 7.6.3: http://www.haskell.org/ghc/  :? for help
+Loading package ghc-prim ... linking ... done.
+Loading package integer-gmp ... linking ... done.
+...
+Loading package HUnit-1.2.5.2 ... linking ... done.
+[1 of 9] Compiling LayoutToken      ( src/LayoutToken.hs, interpreted )
+[2 of 9] Compiling Syntax           ( src/Syntax.hs, interpreted )
+[3 of 9] Compiling Parser           ( src/Parser.hs, interpreted )
+[4 of 9] Compiling PrettyPrint      ( src/PrettyPrint.hs, interpreted )
+[5 of 9] Compiling Environment      ( src/Environment.hs, interpreted )
+[6 of 9] Compiling Equal            ( src/Equal.hs, interpreted )
+[7 of 9] Compiling TypeCheck        ( src/TypeCheck.hs, interpreted )
+[8 of 9] Compiling Modules          ( src/Modules.hs, interpreted )
+[9 of 9] Compiling Main             ( src/Main.hs, interpreted )
+Ok, modules loaded: Syntax, Parser, TypeCheck, Main, LayoutToken, Environment, PrettyPrint, Equal, Modules.
+*Syntax &gt; :l ReParse
+[1 of 5] Compiling Syntax           ( src/Syntax.hs, interpreted )
+[2 of 5] Compiling PrettyPrint      ( src/PrettyPrint.hs, interpreted )
+[3 of 5] Compiling ReSyntax         ( src/ReSyntax.hs, interpreted )
+[4 of 5] Compiling RePP             ( src/RePP.hs, interpreted )
+[5 of 5] Compiling ReParse          ( src/ReParse.hs, interpreted )
+Ok, modules loaded: Syntax, PrettyPrint, ReParse, ReSyntax, RePP.
+*ReParse &gt;</pre><p>
+    Parse an identifier:
+  </p><pre class="programlisting">*ReParse &gt; parseTest (runInnerParser $ runFreshMT $ evalStateT (whiteSpace *&gt; identifier) piInit ) "  wow this rocks"
+"wow"</pre><p>
+    Now parse the identifier in the white space aware parser,
+    ie. including the whitespace following it
+  </p><pre class="programlisting">*ReParse &gt; parseTest (runInnerParser $ runFreshMT $ evalStateT (whiteSpace *&gt; id') piInit ) "  wow this rocks"
+("wow",Ws " ")
+*ReParse &gt;</pre><p>
+    Naming conventions are as follows:
+  </p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p>
+	Parsers for abstract syntax (absy parsers) have names like the
+	original parsec ones: <span class="emphasis"><em>identifier</em></span>,
+	<span class="emphasis"><em>variable</em></span>, <span class="emphasis"><em>reserved</em></span>,
+	<span class="emphasis"><em>expr</em></span> etc. and they parse the original
+	data structures defined in
+	<code class="classname">Syntax.hs</code>. Their code is in most cases
+	identical to the Parsec versions.
+      </p></li><li class="listitem"><p>
+	Primed versions of those names: <span class="emphasis"><em>identifier'</em></span>,
+	<span class="emphasis"><em>expr'</em></span> etc. are used for the corresponding concrete syntax
+	parsers, but sometimes I have taken the liberty to shortcut /
+	simplify those names: <span class="emphasis"><em>id'</em></span> for
+	<span class="emphasis"><em>identifier'</em></span>, <span class="emphasis"><em>res'</em></span> for <span class="emphasis"><em>reserved'</em></span> etc.,
+	especially for those parsers that are used very often (the
+	building blocks). They parse the white space aware data structures
+	in <code class="classname">ReSyntax.hs</code>
+      </p></li><li class="listitem"><p>
+	Any other variation of a name, like double primes:
+	<span class="emphasis"><em>id''</em></span> denote helper functions, experimental
+	versions etc.
+      </p></li></ul></div><p>
+    For reading the code it may be easiest to start with the simple parsers
+    (below the comment line <code class="literal">-- the real stuff - parsing</code>
+    in <code class="classname">ReParse</code>) and then
+    proceed to the more complicated ones, and later maybe read the Trifecta setup etc
+    before that line.
+  </p><p>
+    More complicated expressions can be parsed, too:
+  </p><pre class="programlisting">*ReParse &gt; parseTest (runInnerParser $ runFreshMT $ evalStateT (whiteSpace *&gt; expr) piInit ) "   \\n . if nat_leq n 0 then 1 else mult n (fac (minus n 1))  "
+Pos "&lt;interactive&gt;" (line 0, column 4) (Lam (&lt;(n,{Annot Nothing})&gt; Pos "&lt;interactive&gt;" (line 0, column 9) (If (Pos "&lt;interactive&gt;" (line 0, column 12) (App (App (Var nat_leq) (Var 0@0)) (DCon "Zero" [] (Annot (Just (TCon "Nat" [])))))) (Pos "&lt;interactive&gt;" (line 0, column 29) (DCon "Succ" [Arg Runtime (DCon "Zero" [] (Annot (Just (TCon "Nat" []))))] (Annot (Just (TCon "Nat" []))))) (Pos "&lt;interactive&gt;" (line 0, column 36) (App (App (Var mult) (Var 0@0)) (Paren (Pos "&lt;interactive&gt;" (line 0, column 44) (App (Var fac) (Paren (Pos "&lt;interactive&gt;" (line 0, column 49) (App (App (Var minus) (Var 0@0)) (DCon "Succ" [Arg Runtime (DCon "Zero" [] (Annot (Just (TCon "Nat" []))))] (Annot (Just (TCon "Nat" [])))))))))))) (Annot Nothing))))
+parseTest (runInnerParser $ runFreshMT $ evalStateT (whiteSpace *&gt; expr) piInit ) "   \\n . if nat_leq n 0 then 1 else mult n (fac (minus n 1))  "minus n 1))  "
+  :: MonadIO m =&gt; m ()
+*ReParse &gt;</pre><p>
+    And the equivalent expression in concrete syntax
+    (<span class="emphasis"><em>expr'</em></span> instead of <span class="emphasis"><em>expr</em></span>):
+  </p><pre class="programlisting">*ReParse &gt; parseTest (runInnerParser $ runFreshMT $ evalStateT (whiteSpace *&gt; expr') piInit ) "   \\n . if nat_leq n 0 then 1 else mult n (fac (minus n 1))  "
+Lam' (Ws "") (&lt;(n,{Annot' Nothing (Ws " ")})&gt; If' (Ws " ") (App' (App' (Var' nat_leq (Ws " ")) (Var' 0@0 (Ws " "))) (DCon' (DCName' "Zero" (Ws " ")) [] (Annot' (Just (TCon' (TCName' "Nat" (Ws "")) [])) (Ws "")))) (Ws " ") (DCon' (DCName' "Succ" (Ws " ")) [Arg' Runtime (DCon' (DCName' "Zero" (Ws "")) [] (Annot' (Just (TCon' (TCName' "Nat" (Ws "")) [])) (Ws "")))] (Annot' (Just (TCon' (TCName' "Nat" (Ws "")) [])) (Ws ""))) (Ws " ") (App' (App' (Var' mult (Ws " ")) (Var' 0@0 (Ws " "))) (Paren' (ParenOpen (Ws "")) (App' (Var' fac (Ws " ")) (Paren' (ParenOpen (Ws "")) (App' (App' (Var' minus (Ws " ")) (Var' 0@0 (Ws " "))) (DCon' (DCName' "Succ" (Ws "")) [Arg' Runtime (DCon' (DCName' "Zero" (Ws "")) [] (Annot' (Just (TCon' (TCName' "Nat" (Ws "")) [])) (Ws "")))] (Annot' (Just (TCon' (TCName' "Nat" (Ws "")) [])) (Ws "")))) (ParenClose (Ws "")))) (ParenClose (Ws "  ")))) (Annot' Nothing (Ws "")))
+*ReParse &gt;</pre><p>
+    Of course one wants some kind of pretty printing here, but
+    <span class="emphasis"><em>parseTest</em></span> is only so useful here, because it
+    does its own job of rendering the result by running in the IO
+    monad, as can be seen by its type its type:
+  </p><pre class="programlisting">
+  *ReParse &gt; :t parseTest (runInnerParser $ runFreshMT $ evalStateT (whiteSpace *&gt; expr) piInit ) "   \\n . if nat_leq n 0 then 1 else mult n (fac (minus n 1))  "
+parseTest (runInnerParser $ runFreshMT $ evalStateT (whiteSpace *&gt; expr) piInit ) "   \\n . if nat_leq n 0 then 1 else mult n (fac (minus n 1))  "
+  :: MonadIO m =&gt; m ()
+  *ReParse &gt;</pre></div></div></body></html>

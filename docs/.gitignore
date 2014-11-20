@@ -17,12 +17,12 @@ optima
 
 
 pdf
-*.pdf
+# *.pdf
 *.fo
 
 
 html
-*.html
+# *.html
 
 
 # mytitlepage-fo.Xml
