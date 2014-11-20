@@ -99,10 +99,10 @@
     <classname>Sample.pi</classname> above:
   </para>
 
-  <programlisting><![CDATA[*Main > goFilename "/home/reuleaux/etc/th-p/pi/Sample.pi"
+  <programlisting><![CDATA[*Main > goFilename "/home/rx/etc/th-p/pi/Sample.pi"
 processing Sample.pi...
-Parsing File "/home/reuleaux/etc/th-p/pi/Nat.pi"
-Parsing File "/home/reuleaux/etc/th-p/pi/Sample.pi"
+Parsing File "/home/rx/etc/th-p/pi/Nat.pi"
+Parsing File "/home/rx/etc/th-p/pi/Sample.pi"
 type checking...
 Checking module "Nat"
 Checking module "Fac"
@@ -189,10 +189,10 @@ bar = \n .
   </para>
 
 
-  <programlisting><![CDATA[*Main > runErrorT (getModules ["/home/reuleaux/etc/th-p/pi/"] "Sample.pi")
-Parsing File "/home/reuleaux/etc/th-p/pi/Nat.pi"
-Parsing File "/home/reuleaux/etc/th-p/pi/Sample.pi"
-Right [Module {moduleName = "Nat", moduleImports = [], moduleEntries = [Data "Nat" Empty [ConstructorDef "/home/reuleaux/etc/th-p/pi/Nat.pi" (line 14, column 3) "Zero" Empty,ConstructorDef "/home/reuleaux/etc/th-p/pi/Nat.pi" (line 15, column 3) "Succ" (Cons Runtime _ (Pos "/home/reuleaux/etc/th-p/pi/Nat.pi" ...]]></programlisting>
+  <programlisting><![CDATA[*Main > runErrorT (getModules ["/home/rx/etc/th-p/pi/"] "Sample.pi")
+Parsing File "/home/rx/etc/th-p/pi/Nat.pi"
+Parsing File "/home/rx/etc/th-p/pi/Sample.pi"
+Right [Module {moduleName = "Nat", moduleImports = [], moduleEntries = [Data "Nat" Empty [ConstructorDef "/home/rx/etc/th-p/pi/Nat.pi" (line 14, column 3) "Zero" Empty,ConstructorDef "/home/rx/etc/th-p/pi/Nat.pi" (line 15, column 3) "Succ" (Cons Runtime _ (Pos "/home/rx/etc/th-p/pi/Nat.pi" ...]]></programlisting>
 
 
   <para>
@@ -207,10 +207,10 @@ Right [Module {moduleName = "Nat", moduleImports = [], moduleEntries = [Data "Na
 
 
   <programlisting><![CDATA[*Main > :m +Data.Either.Combinators
-*Main Data.Either.Combinators > runErrorT (getModules ["/home/reuleaux/etc/th-p/pi/"] "Sample.pi") >>= return . last . fromRight'
-Parsing File "/home/reuleaux/etc/th-p/pi/Nat.pi"
-Parsing File "/home/reuleaux/etc/th-p/pi/Sample.pi"
-Module {moduleName = "Fac", moduleImports = [ModuleImport "Nat"], moduleEntries = [Sig two (Pos "/home/reuleaux/etc/th-p/pi/Sample.pi" (line 12, column 7) (TCon "Nat" [])),Def two ...]]></programlisting>
+*Main Data.Either.Combinators > runErrorT (getModules ["/home/rx/etc/th-p/pi/"] "Sample.pi") >>= return . last . fromRight'
+Parsing File "/home/rx/etc/th-p/pi/Nat.pi"
+Parsing File "/home/rx/etc/th-p/pi/Sample.pi"
+Module {moduleName = "Fac", moduleImports = [ModuleImport "Nat"], moduleEntries = [Sig two (Pos "/home/rx/etc/th-p/pi/Sample.pi" (line 12, column 7) (TCon "Nat" [])),Def two ...]]></programlisting>
 
 
   
@@ -221,9 +221,9 @@ Module {moduleName = "Fac", moduleImports = [ModuleImport "Nat"], moduleEntries 
 
 
   
-  <programlisting><![CDATA[*Main Data.Either.Combinators > runErrorT (getModules ["/home/reuleaux/etc/th-p/pi/"] "Sample.pi") >>= return . disp . last . fromRight'
-Parsing File "/home/reuleaux/etc/th-p/pi/Nat.pi"
-Parsing File "/home/reuleaux/etc/th-p/pi/Sample.pi"
+  <programlisting><![CDATA[*Main Data.Either.Combinators > runErrorT (getModules ["/home/rx/etc/th-p/pi/"] "Sample.pi") >>= return . disp . last . fromRight'
+Parsing File "/home/rx/etc/th-p/pi/Nat.pi"
+Parsing File "/home/rx/etc/th-p/pi/Sample.pi"
 module Fac where
 import Nat
 two : Nat
@@ -273,8 +273,8 @@ bar = \n .
   </para>
 
     
-  <programlisting><![CDATA[*Main Syntax Data.Either.Combinators > runErrorT (parseModuleFile  emptyConstructorNames  "/home/reuleaux/etc/th-p/pi/SimpleSample.pi") >>= return . disp . fromRight'
-Parsing File "/home/reuleaux/etc/th-p/pi/SimpleSample.pi"
+  <programlisting><![CDATA[*Main Syntax Data.Either.Combinators > runErrorT (parseModuleFile  emptyConstructorNames  "/home/rx/etc/th-p/pi/SimpleSample.pi") >>= return . disp . fromRight'
+Parsing File "/home/rx/etc/th-p/pi/SimpleSample.pi"
 module Fac where
 data Nat : Type where
   Zero

@@ -20,12 +20,14 @@
     code from the solutions directory of Stephanie's OPLSS14
     code, with Pire's modules added, all starting with
     <classname>Re</classname> (for
-    "refactoring").
-  </para>
-  
-  <para>
-    Pire's cabal file started out as Pi-forall's cabal file with some
-    additional requirements (for Trifecta etc).
+    "refactoring").<footnote>
+    <para>
+      Pire's cabal file <filename>pire.cabal</filename> 
+      started out as Pi-forall's cabal file as well,
+      with some additional requirements (for Trifecta etc) added.
+    </para>
+  </footnote>
+
   </para>
 
   <para>
@@ -46,23 +48,68 @@
     relaxed the upper bounds for Pi-forall's original requirements as well:
     not sure if it was wise to do so, but will see.
   </para>
+
+    
+  <para>
+    Steps to install (roughly):
+  </para>
+
+   <programlisting><![CDATA[$ cd pire
+$ cabal sandbox init
+$ cabal update
+$ cabal install highlight-versions
+$ cabal --dry-run install | ./.cabal-sandbox/bin/highlight-versions]]></programlisting>
+
+    
+  <para>
+    ...and if happy with this dry-run, do the real installation:
+  </para>
+  
+  
+  <programlisting><![CDATA[$ cabal install]]></programlisting>
+
+      
+  <para>
+    You should then be able to experiment with the original Pi-forall
+    code, as well as Pire's in <emphasis>cabal-repl</emphasis> 
+    (the sandbox aware version
+    of ghci), loading the main Pi-forall module e.g.:
+  </para>
+  
+  <programlisting><![CDATA[$ cabal repl
+...
+> :l Main
+]]></programlisting>
+
+        
+  <para>
+    Or Pire's trifecta parsers:
+  </para>
+
+  
+  <programlisting><![CDATA[> :l ReParse]]></programlisting>
+  
   
   <para>
-    I plan to maintain the code in this "easy to install on Debian
+    I plan to maintain the code <footnote>
+    <para>
+      at least for a while: would like to switch my refactoring efforts
+      to Idris at some point.
+    </para>
+  </footnote>
+  in this "easy to install on Debian
     testing" manner, ie. not switch to Trifecta 1.5.1 eg. before
     version 1.5.1 enters Debian testing, unless there is a striking
     reason to use this newer version from hackage today already. The
-    files in the install directory starting with
-    <filename>pre</filename> (for "precondition") are merely a
-    reminder for me, what packages should be installed via cabal
-    (starting with <filename>pre-hs-</filename>), or from Debian
-    (starting with <filename>pre-deb-</filename>).
+    (zero length) files in the install directory I use merely as a
+    reminder, which packages I installed from debian (<filename>deb-*</filename>),
+    which via haskell cabal (<filename>hs-*</filename>, cf. the readme there
+    for further explanations).
   </para>
   
   <para>
-    Being aware that these Debian requirements may render the installation
-    incomplete as a self-contained pure Haskell (cabal) installation, I
-    would think that there are packages available on other systems similar
+    Pire has succussfully been installed on a Mac as well, and 
+    I would think that there are packages available on other systems similar
     to the Debian ones, and requirements, version numbers, bounds
     etc. should get some more tweaking in the future.
   </para>

@@ -9,19 +9,16 @@ There is a clear distinction between Pi-forall original source code,
 and Pire's own code (only few modifications have been made so far), 
 and some naming conventions were thus established:
 
- * The files in the src directory NOT STARTING WITH "Re" (for
-   refactoring), are Pi-foralls original source code files (and as
-   such covered by their original license, University of
-   Pennsylvania).
+ * The files in the src directory NOT STARTING WITH "Re", 
+   are Pi-foralls original source code files.
 
  * The ones in the src directory STARTING WITH "Re" are Pire's own
-   source code, covered by the same kind of license, University of
-   Kent).
+   source code.
 
-But other files are copied from Pi-forall's source code as well
-(eg. in the test and samples directories), or modified from
-Pi-forall's original files (pire.cabal eg.). Tests are for Pi-forall's
-original code only currently, but are planned for pire as well.
+Other files are copied from Pi-forall's source code as well (eg. in
+the test and samples directories), or modified from Pi-forall's
+original files (pire.cabal eg.). Tests are for Pi-forall's original
+code only currently, but are planned for pire as well.
 
 Some code snippets were used from other sources still:
 
@@ -32,7 +29,6 @@ Some code snippets were used from other sources still:
    documentation from Norman Walsh 
    (https://github.com/ndw/xslt-relax-ng).
 
-At this time Pire merely offers a different parser for
-for Pi-forall.
+At this time Pire merely offers a different parser for for Pi-forall.
 
 Please find further documentation in the docs directory.

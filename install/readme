@@ -1,0 +1,33 @@
+
+Installation is explained in further details in the docs.
+
+The files in this directory are just used a reminder for
+me:
+
+* which packages I installed from debian (starting with deb-),
+
+* and which from haskell via cabal: hs-*
+
+* some packages formerly installed by hand, are now installed
+  automatically as dependencies: auto-*
+
+* some packages I find nice to have for development,
+  but are not strictly required: maybe-*, nice-*
+
+* etc.
+
+I tend to use debian (testing) packages as much as I can, and only
+install via cabal what I don't find in debian, or what
+doesn't meet my version requirements.
+
+Naturally these dependencies are changing with debian changing,
+as well as hackage.
+
+And by the way, I use similar naming conventions: 
+
+* to take some notes: note-*
+
+* or to keep some now obsolete file still around for a while:
+  obs-*
+
+These are both are excluded via .gitignore.

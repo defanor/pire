@@ -162,8 +162,170 @@ parseTest (runInnerParser $ runFreshMT $ evalStateT (whiteSpace *> expr) piInit 
 
       
   <para>
-    To be continued...
+    Thus one wants to use one of the other Trifecta parsing functions:
+    <function>parseString</function>, <function>parseFromFile</function>,
+    <function>parseFromFileEx</function>, eg. parse the if-then-else expression
+    above with <function>parseString</function> yields a result in a Result type
+    <footnote>
+      <para>
+	note, that we need here as well:
+	<itemizedlist>
+	  <listitem>
+	    <para>
+	      <emphasis>piInit</emphasis>,
+	      a kind of empty prelude (to keep track of constructer names, help
+	      with layout parsing etc.)
+	    </para>
+	  </listitem>
+	  
+	  <listitem>
+	    <para>
+	      <emphasis>top</emphasis>, a means to tell the parser,
+	      where we start, at the top ie.
+	    </para>
+	  </listitem>
+	</itemizedlist>
+	
+	
+      </para>
+    </footnote>
+  </para>
+  
+  <programlisting><![CDATA[*ReParse > parseString (runInnerParser $ runFreshMT $ evalStateT (whiteSpace *> expr) piInit) top " \\n . if nat_leq n 0 then 1 else mult n (fac (minus n 1))  "
+Success (Pos "<interactive>" (line 1, column 2) (Lam (<(n,{Annot Nothing})> Pos "<interactive>" (line 1, column 7) (If (Pos "<interactive>" (line 1, column 10) (App (App (Var nat_leq) (Var 0@0)) (DCon "Zero" [] (Annot (Just (TCon "Nat" [])))))) (Pos "<interactive>" (line 1, column 27) (DCon "Succ" [Arg Runtime (DCon "Zero" [] (Annot (Just (TCon "Nat" []))))] (Annot (Just (TCon "Nat" []))))) (Pos "<interactive>" (line 1, column 34) (App (App (Var mult) (Var 0@0)) (Paren (Pos "<interactive>" (line 1, column 42) (App (Var fac) (Paren (Pos "<interactive>" (line 1, column 47) (App (App (Var minus) (Var 0@0)) (DCon "Succ" [Arg Runtime (DCon "Zero" [] (Annot (Just (TCon "Nat" []))))] (Annot (Just (TCon "Nat" [])))))))))))) (Annot Nothing)))))
+*ReParse >]]></programlisting>
+
+
+        
+  <para>
+    This result can then be displayed:
+  </para>
+  
+  <programlisting><![CDATA[*ReParse > disp $ fromSuccess $ parseString (runInnerParser $ runFreshMT $ evalStateT (whiteSpace *> expr) piInit) top " \\n . if nat_leq n 0 then 1 else mult n (fac (minus n 1))  "
+\n . if nat_leq n 0 then 1 else mult n ((fac ((minus n (1)))))
+*ReParse >]]></programlisting>
+  
+        
+  <para>
+    So what?, you might say. - See what happens if we parse the same
+    expression with some comments in between: First with the expr parser as above:
+  </para>
+  
+  <programlisting><![CDATA[*ReParse > disp $ fromSuccess $ parseString (runInnerParser $ runFreshMT $ evalStateT (whiteSpace *> expr) piInit) top " \\n . if {-foo-} nat_leq n 0 then {-bar-} 1 else mult n (fac (minus n 1))  "
+\n . if nat_leq n 0 then 1 else mult n ((fac ((minus n (1)))))
+*ReParse >]]></programlisting>
+
+        
+  <para>
+    The comments are lost - they are comments after all for the absy parser.
+    But now parse them with white-space aware parser (<function>expr'</function> instead of
+    <function>expr</function>):
+  </para>
+  
+  <programlisting><![CDATA[*ReParse > disp $ fromSuccess $ parseString (runInnerParser $ runFreshMT $ evalStateT (whiteSpace *> expr') piInit) top " \\n . if {-foo-} nat_leq n 0 then {-bar-} 1 else mult n (fac (minus n 1))  "
+\n . if {-foo-} nat_leq n 0 then {-bar-} 1 else mult n (fac (minus n 1))   
+*ReParse >]]></programlisting>
+    
+          
+  <para>
+    See how they are kept!
   </para>
 
+            
+  <para>
+    OK, lots more stuff to explain, and to do of course, just a rough
+    overview at this point:
+
+    <itemizedlist>
+      <listitem>
+	<para>
+	  explain some more advanced usage of the white-space aware
+	  parser, that is possible already
+	  (some examples can be found in <filename>exampls.hs</filename>,
+	  and be used by cut &amp; paste at the cabal repl prompt).
+	</para>
+      </listitem>
+      
+      <listitem>
+	<para>
+	  in particular explain how to parse files with <filename>parseFromFile</filename>,
+	  <filename>parseFromFileEx</filename>, thereby sticking to simple
+	  cases first (no imports of other modules), but import of other modules
+	  is in the works.
+	</para>
+      </listitem>
+
+      <listitem>
+	<para>
+	  create some test cases, to be run automatically.
+	</para>
+      </listitem>
+
+      
+      <listitem>
+	<para>
+	  refine the parsers, improve the situation for module imports
+	  and make sure, they work with all the original Pi-forall .pi files.
+	</para>
+      </listitem>
+
+            
+      <listitem>
+	<para>
+	  get rid of some of the desugaring that happens in the parser
+	  currently still (eg. conversion of Nats)
+	</para>
+      </listitem>
+      
+      
+      
+      <listitem>
+	<para>
+	  implement some kind of forget function: from concrete syntax to
+	  abstract syntax, thereby allowing typechecking (which requires
+	  abstract syntax).
+	</para>
+      </listitem>
+
+            
+      <listitem>
+	<para>
+	  explain how layout parsing is handled.
+	</para>
+      </listitem>
+      
+      
+      <listitem>
+	<para>
+	  explain, how we have leveraged unbound's substitutions for some
+	  simple refactorings (but have a look at other binding libs as well.)
+	</para>
+      </listitem>
+
+            
+      <listitem>
+	<para>
+	  clean up the code (ie. remove some of my traces of my experimention)
+	</para>
+      </listitem>
+      
+      
+      
+      <listitem>
+	<para>
+	  Have some fun, and do some refactorings!
+	</para>
+      </listitem>
+      
+      
+      
+
+      
+    </itemizedlist>
+    
+
+  </para>
+  
+  
   
 </section>
