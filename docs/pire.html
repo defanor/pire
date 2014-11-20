@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /><title>Pire</title><link rel="stylesheet" type="text/css" href="my.css" /><meta name="generator" content="DocBook XSL Stylesheets V1.78.1" /></head><body><div xml:lang="en" class="article" lang="en"><div class="titlepage"><div><div><h2 class="title"><a id="idp47725296"></a>Pire</h2></div><div><h3 class="subtitle"><em>Aiming to become Pi-forall's Refactorer, so far just another Pi-forall Parser</em></h3></div><div><div class="author"><h3 class="author"><span class="firstname">Andreas</span> <span class="surname">Reuleaux</span></h3><code class="email">&lt;<a class="email" href="mailto:a.reuleaux@kent.ac.uk">a.reuleaux@kent.ac.uk</a>&gt;</code><code class="email">&lt;<a class="email" href="mailto:ar414@kent.ac.uk">ar414@kent.ac.uk</a>&gt;</code><code class="email">&lt;<a class="email" href="mailto:andreas@a-rx.net">andreas@a-rx.net</a>&gt;</code></div></div><div><p class="pubdate">November 2014</p></div></div><hr /></div><div class="toc"><p><strong>Table of Contents</strong></p><dl class="toc"><dt><span class="section"><a href="#idp53275504">Introduction</a></span></dt><dt><span class="section"><a href="#idp53284224">Pi-forall 101</a></span></dt><dt><span class="section"><a href="#idp53307008">Pire: Source code and Installation</a></span></dt><dt><span class="section"><a href="#idp53319392">Pi-forall's Parsec parser</a></span></dt><dt><span class="section"><a href="#idp53397216">The Trifecta parsers: a tour</a></span></dt></dl></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="idp53275504"></a>Introduction</h2></div></div></div><p>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /><title>Pire</title><link rel="stylesheet" type="text/css" href="my.css" /><meta name="generator" content="DocBook XSL Stylesheets V1.78.1" /></head><body><div xml:lang="en" class="article" lang="en"><div class="titlepage"><div><div><h2 class="title"><a id="idp45691776"></a>Pire</h2></div><div><h3 class="subtitle"><em>Aiming to become Pi-forall's Refactorer, so far just another Pi-forall Parser</em></h3></div><div><div class="author"><h3 class="author"><span class="firstname">Andreas</span> <span class="surname">Reuleaux</span></h3><code class="email">&lt;<a class="email" href="mailto:a.reuleaux@kent.ac.uk">a.reuleaux@kent.ac.uk</a>&gt;</code><code class="email">&lt;<a class="email" href="mailto:ar414@kent.ac.uk">ar414@kent.ac.uk</a>&gt;</code><code class="email">&lt;<a class="email" href="mailto:andreas@a-rx.net">andreas@a-rx.net</a>&gt;</code></div></div><div><p class="pubdate">November 2014</p></div></div><hr /></div><div class="toc"><p><strong>Table of Contents</strong></p><dl class="toc"><dt><span class="section"><a href="#idp51134176">Introduction</a></span></dt><dt><span class="section"><a href="#idp51142896">Pi-forall 101</a></span></dt><dt><span class="section"><a href="#idp51165680">Pire: Source code and Installation</a></span></dt><dt><span class="section"><a href="#idp51176960">Pi-forall's Parsec parser</a></span></dt><dt><span class="section"><a href="#idp51254448">The Trifecta parsers: a tour</a></span></dt></dl></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="idp51134176"></a>Introduction</h2></div></div></div><p>
     Pi-forall is a small dependently typed programming language
     developed by Stephanie Weirich, mainly for educational purposes,
     implemented in Haskell.
@@ -38,7 +38,7 @@
 	 parsing Pi-forall's concrete syntax, preserving white space and
 	 comments, and (together with a modified pretty-printer) should
 	 therefore be better suited for refactoring.
-       </p></li></ul></div></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="idp53284224"></a>Pi-forall 101</h2></div></div></div><p>
+       </p></li></ul></div></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="idp51142896"></a>Pi-forall 101</h2></div></div></div><p>
     Starting from just the bare minimum of language constructs:
   </p><pre class="programlisting">a, A := 
   x            -- variables
@@ -111,7 +111,7 @@
         finding free variables
       </p></li><li class="listitem"><p>
         substitution, and more.
-      </p></li></ul></div></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="idp53307008"></a>Pire: Source code and Installation</h2></div></div></div><p>
+      </p></li></ul></div></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="idp51165680"></a>Pire: Source code and Installation</h2></div></div></div><p>
     While Pire could exist separately from Pi-forall (or at least rely on
     only parts of it), it was convenient to have all of Pi-forall's source
     code at hand.
@@ -120,7 +120,7 @@
     code from the solutions directory of Stephanie's OPLSS14
     code, with Pire's modules added, all starting with
     <code class="classname">Re</code> (for
-    "refactoring").<a href="#ftn.idp53309072" class="footnote" id="idp53309072"><sup class="footnote">[1]</sup></a>
+    "refactoring").<a href="#ftn.idp51167744" class="footnote" id="idp51167744"><sup class="footnote">[1]</sup></a>
 
   </p><p>
     Installation works for me in a cabal sandbox on a Debian jessie (= testing)
@@ -156,8 +156,8 @@ $ cabal --dry-run install | ./.cabal-sandbox/bin/highlight-versions</pre><p>
 </pre><p>
     Or Pire's trifecta parsers:
   </p><pre class="programlisting">&gt; :l ReParse</pre><p>
-    I plan to maintain the code <a href="#ftn.idp53316176" class="footnote" id="idp53316176"><sup class="footnote">[2]</sup></a>
-  in this "easy to install on Debian
+    I plan to maintain the code 
+    in this "easy to install on Debian
     testing" manner, ie. not switch to Trifecta 1.5.1 eg. before
     version 1.5.1 enters Debian testing, unless there is a striking
     reason to use this newer version from hackage today already. The
@@ -166,12 +166,11 @@ $ cabal --dry-run install | ./.cabal-sandbox/bin/highlight-versions</pre><p>
     which via haskell cabal (<code class="filename">hs-*</code>, cf. the readme there
     for further explanations).
   </p><p>
-    Being aware that these Debian requirements may render the installation
-    incomplete as a self-contained pure Haskell (cabal) installation, I
-    would think that there are packages available on other systems similar
+    Pire has succussfully been installed on a Mac as well, and 
+    I would think that there are packages available on other systems similar
     to the Debian ones, and requirements, version numbers, bounds
     etc. should get some more tweaking in the future.
-  </p></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="idp53319392"></a>Pi-forall's Parsec parser</h2></div></div></div><p>
+  </p></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="idp51176960"></a>Pi-forall's Parsec parser</h2></div></div></div><p>
     While Pi-forall's parser is arguably its least interesting part (and
     barely mentioned in Stephanie's lectures) parsing is the starting
     point for any serious implementation (and hence refactoring) work.
@@ -254,10 +253,10 @@ bar = \n. let fac = ((\x . plus x 2) : Nat -&gt; Nat) in plus (foo n) (fac (mult
     <code class="classname">Main.hs</code>, which parses, typechecks, and
     pretty-prints the given Pi-forall source file, in the case of
     <code class="classname">Sample.pi</code> above:
-  </p><pre class="programlisting">*Main &gt; goFilename "/home/reuleaux/etc/th-p/pi/Sample.pi"
+  </p><pre class="programlisting">*Main &gt; goFilename "/home/rx/etc/th-p/pi/Sample.pi"
 processing Sample.pi...
-Parsing File "/home/reuleaux/etc/th-p/pi/Nat.pi"
-Parsing File "/home/reuleaux/etc/th-p/pi/Sample.pi"
+Parsing File "/home/rx/etc/th-p/pi/Nat.pi"
+Parsing File "/home/rx/etc/th-p/pi/Sample.pi"
 type checking...
 Checking module "Nat"
 Checking module "Fac"
@@ -321,10 +320,10 @@ bar = \n .
     <code class="function">getModules</code> in the
     <code class="classname">Control.Monad.Error</code> monad, like so (only the
     beginning of the result is shown):
-  </p><pre class="programlisting">*Main &gt; runErrorT (getModules ["/home/reuleaux/etc/th-p/pi/"] "Sample.pi")
-Parsing File "/home/reuleaux/etc/th-p/pi/Nat.pi"
-Parsing File "/home/reuleaux/etc/th-p/pi/Sample.pi"
-Right [Module {moduleName = "Nat", moduleImports = [], moduleEntries = [Data "Nat" Empty [ConstructorDef "/home/reuleaux/etc/th-p/pi/Nat.pi" (line 14, column 3) "Zero" Empty,ConstructorDef "/home/reuleaux/etc/th-p/pi/Nat.pi" (line 15, column 3) "Succ" (Cons Runtime _ (Pos "/home/reuleaux/etc/th-p/pi/Nat.pi" ...</pre><p>
+  </p><pre class="programlisting">*Main &gt; runErrorT (getModules ["/home/rx/etc/th-p/pi/"] "Sample.pi")
+Parsing File "/home/rx/etc/th-p/pi/Nat.pi"
+Parsing File "/home/rx/etc/th-p/pi/Sample.pi"
+Right [Module {moduleName = "Nat", moduleImports = [], moduleEntries = [Data "Nat" Empty [ConstructorDef "/home/rx/etc/th-p/pi/Nat.pi" (line 14, column 3) "Zero" Empty,ConstructorDef "/home/rx/etc/th-p/pi/Nat.pi" (line 15, column 3) "Succ" (Cons Runtime _ (Pos "/home/rx/etc/th-p/pi/Nat.pi" ...</pre><p>
     The result is a list of modules, really: <code class="classname">Nat.pi</code>
     and <code class="classname">Sample.pi</code>, in the Either monad. Normally
     we'd be interested only in the <span class="emphasis"><em>last</em></span> module
@@ -333,15 +332,15 @@ Right [Module {moduleName = "Nat", moduleImports = [], moduleEntries = [Data "Na
     <code class="classname">either</code> package is handy for revealing this
     result (again, only the beginning of the output is shown):
   </p><pre class="programlisting">*Main &gt; :m +Data.Either.Combinators
-*Main Data.Either.Combinators &gt; runErrorT (getModules ["/home/reuleaux/etc/th-p/pi/"] "Sample.pi") &gt;&gt;= return . last . fromRight'
-Parsing File "/home/reuleaux/etc/th-p/pi/Nat.pi"
-Parsing File "/home/reuleaux/etc/th-p/pi/Sample.pi"
-Module {moduleName = "Fac", moduleImports = [ModuleImport "Nat"], moduleEntries = [Sig two (Pos "/home/reuleaux/etc/th-p/pi/Sample.pi" (line 12, column 7) (TCon "Nat" [])),Def two ...</pre><p>
+*Main Data.Either.Combinators &gt; runErrorT (getModules ["/home/rx/etc/th-p/pi/"] "Sample.pi") &gt;&gt;= return . last . fromRight'
+Parsing File "/home/rx/etc/th-p/pi/Nat.pi"
+Parsing File "/home/rx/etc/th-p/pi/Sample.pi"
+Module {moduleName = "Fac", moduleImports = [ModuleImport "Nat"], moduleEntries = [Sig two (Pos "/home/rx/etc/th-p/pi/Sample.pi" (line 12, column 7) (TCon "Nat" [])),Def two ...</pre><p>
     Now we can use <span class="emphasis"><em>disp</em></span> for pretty printing the
     result:
-  </p><pre class="programlisting">*Main Data.Either.Combinators &gt; runErrorT (getModules ["/home/reuleaux/etc/th-p/pi/"] "Sample.pi") &gt;&gt;= return . disp . last . fromRight'
-Parsing File "/home/reuleaux/etc/th-p/pi/Nat.pi"
-Parsing File "/home/reuleaux/etc/th-p/pi/Sample.pi"
+  </p><pre class="programlisting">*Main Data.Either.Combinators &gt; runErrorT (getModules ["/home/rx/etc/th-p/pi/"] "Sample.pi") &gt;&gt;= return . disp . last . fromRight'
+Parsing File "/home/rx/etc/th-p/pi/Nat.pi"
+Parsing File "/home/rx/etc/th-p/pi/Sample.pi"
 module Fac where
 import Nat
 two : Nat
@@ -401,8 +400,8 @@ fac = \n . if nat_leq n 0 then 1 else mult n (fac (minus n 1))
     (<code class="classname">Nat</code>, <code class="methodname">Zero</code>,
     <code class="methodname">Succ</code>,...) running in the
     <code class="methodname">State</code> monad internally):
-  </p><pre class="programlisting">*Main Syntax Data.Either.Combinators &gt; runErrorT (parseModuleFile  emptyConstructorNames  "/home/reuleaux/etc/th-p/pi/SimpleSample.pi") &gt;&gt;= return . disp . fromRight'
-Parsing File "/home/reuleaux/etc/th-p/pi/SimpleSample.pi"
+  </p><pre class="programlisting">*Main Syntax Data.Either.Combinators &gt; runErrorT (parseModuleFile  emptyConstructorNames  "/home/rx/etc/th-p/pi/SimpleSample.pi") &gt;&gt;= return . disp . fromRight'
+Parsing File "/home/rx/etc/th-p/pi/SimpleSample.pi"
 module Fac where
 data Nat : Type where
   Zero
@@ -457,7 +456,7 @@ Right (Pos "&lt;interactive&gt;" (line 1, column 2) (App (Var Succ) (Var n)))
   </p><pre class="programlisting">*Parser &gt; let prelude = ConstructorNames (S.fromList ["Nat"]) (S.fromList ["Zero", "Succ"])
 *Parser &gt; runFreshM (evalStateT (runParserT (do { whiteSpace; v &lt;- expr; eof; return v}) [] "&lt;interactive&gt;" " Succ n") prelude)
 Right (Pos "&lt;interactive&gt;" (line 1, column 2) (DCon "Succ" [Arg Runtime (Var n)] (Annot Nothing)))
-*Parser &gt;</pre></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="idp53397216"></a>The Trifecta parsers: a tour</h2></div></div></div><p>
+*Parser &gt;</pre></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="idp51254448"></a>The Trifecta parsers: a tour</h2></div></div></div><p>
     Load the parser module <code class="classname">ReParse</code> to start some experiments:
   </p><pre class="programlisting">reuleaux@softland ~/etc/pire $ cabal repl
 Preprocessing library pire-0.1...
@@ -545,7 +544,7 @@ parseTest (runInnerParser $ runFreshMT $ evalStateT (whiteSpace *&gt; expr) piIn
     <code class="function">parseString</code>, <code class="function">parseFromFile</code>,
     <code class="function">parseFromFileEx</code>, eg. parse the if-then-else expression
     above with <code class="function">parseString</code> yields a result in a Result type
-    <a href="#ftn.idp53424608" class="footnote" id="idp53424608"><sup class="footnote">[3]</sup></a>
+    <a href="#ftn.idp51282096" class="footnote" id="idp51282096"><sup class="footnote">[2]</sup></a>
   </p><pre class="programlisting">*ReParse &gt; parseString (runInnerParser $ runFreshMT $ evalStateT (whiteSpace *&gt; expr) piInit) top " \\n . if nat_leq n 0 then 1 else mult n (fac (minus n 1))  "
 Success (Pos "&lt;interactive&gt;" (line 1, column 2) (Lam (&lt;(n,{Annot Nothing})&gt; Pos "&lt;interactive&gt;" (line 1, column 7) (If (Pos "&lt;interactive&gt;" (line 1, column 10) (App (App (Var nat_leq) (Var 0@0)) (DCon "Zero" [] (Annot (Just (TCon "Nat" [])))))) (Pos "&lt;interactive&gt;" (line 1, column 27) (DCon "Succ" [Arg Runtime (DCon "Zero" [] (Annot (Just (TCon "Nat" []))))] (Annot (Just (TCon "Nat" []))))) (Pos "&lt;interactive&gt;" (line 1, column 34) (App (App (Var mult) (Var 0@0)) (Paren (Pos "&lt;interactive&gt;" (line 1, column 42) (App (Var fac) (Paren (Pos "&lt;interactive&gt;" (line 1, column 47) (App (App (Var minus) (Var 0@0)) (DCon "Succ" [Arg Runtime (DCon "Zero" [] (Annot (Just (TCon "Nat" []))))] (Annot (Just (TCon "Nat" [])))))))))))) (Annot Nothing)))))
 *ReParse &gt;</pre><p>
@@ -573,7 +572,7 @@ Success (Pos "&lt;interactive&gt;" (line 1, column 2) (Lam (&lt;(n,{Annot Nothin
 	  explain some more advanced usage of the white-space aware
 	  parser, that is possible already
 	  (some examples can be found in <code class="filename">exampls.hs</code>,
-	  and be used by cut &amp; paste on the cabal repl prompt).
+	  and be used by cut &amp; paste at the cabal repl prompt).
 	</p></li><li class="listitem"><p>
 	  in particular explain how to parse files with <code class="filename">parseFromFile</code>,
 	  <code class="filename">parseFromFileEx</code>, thereby sticking to simple
@@ -585,27 +584,29 @@ Success (Pos "&lt;interactive&gt;" (line 1, column 2) (Lam (&lt;(n,{Annot Nothin
 	  refine the parsers, improve the situation for module imports
 	  and make sure, they work with all the original Pi-forall .pi files.
 	</p></li><li class="listitem"><p>
+	  get rid of some of the desugaring that happens in the parser
+	  currently still (eg. conversion of Nats)
+	</p></li><li class="listitem"><p>
 	  implement some kind of forget function: from concrete syntax to
 	  abstract syntax, thereby allowing typechecking (which requires
 	  abstract syntax).
+	</p></li><li class="listitem"><p>
+	  explain how layout parsing is handled.
 	</p></li><li class="listitem"><p>
 	  explain, how we have leveraged unbound's substitutions for some
 	  simple refactorings (but have a look at other binding libs as well.)
 	</p></li><li class="listitem"><p>
 	  clean up the code (ie. remove some of my traces of my experimention)
 	</p></li><li class="listitem"><p>
-	  Have some fun with, and do some refactorings!
+	  Have some fun, and do some refactorings!
 	</p></li></ul></div><p>
     
 
-  </p></div><div class="footnotes"><br /><hr style="width:100; text-align:left;margin-left: 0" /><div id="ftn.idp53309072" class="footnote"><p><a href="#idp53309072" class="para"><sup class="para">[1] </sup></a>
+  </p></div><div class="footnotes"><br /><hr style="width:100; text-align:left;margin-left: 0" /><div id="ftn.idp51167744" class="footnote"><p><a href="#idp51167744" class="para"><sup class="para">[1] </sup></a>
       Pire's cabal file <code class="filename">pire.cabal</code> 
       started out as Pi-forall's cabal file as well,
       with some additional requirements (for Trifecta etc) added.
-    </p></div><div id="ftn.idp53316176" class="footnote"><p><a href="#idp53316176" class="para"><sup class="para">[2] </sup></a>
-      at least for a while: would like to switch my refactoring efforts
-      to Idris later.
-    </p></div><div id="ftn.idp53424608" class="footnote"><p><a href="#idp53424608" class="para"><sup class="para">[3] </sup></a>
+    </p></div><div id="ftn.idp51282096" class="footnote"><p><a href="#idp51282096" class="para"><sup class="para">[2] </sup></a>
 	note, that we need here as well:
 	</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p>
 	      <span class="emphasis"><em>piInit</em></span>,

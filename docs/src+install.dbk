@@ -91,13 +91,8 @@ $ cabal --dry-run install | ./.cabal-sandbox/bin/highlight-versions]]></programl
   
   
   <para>
-    I plan to maintain the code <footnote>
-    <para>
-      at least for a while: would like to switch my refactoring efforts
-      to Idris at some point.
-    </para>
-  </footnote>
-  in this "easy to install on Debian
+    I plan to maintain the code 
+    in this "easy to install on Debian
     testing" manner, ie. not switch to Trifecta 1.5.1 eg. before
     version 1.5.1 enters Debian testing, unless there is a striking
     reason to use this newer version from hackage today already. The
